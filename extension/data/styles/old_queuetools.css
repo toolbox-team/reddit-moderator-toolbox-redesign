@@ -4,7 +4,7 @@
 
 .mod-toolbox-rd .menuarea.modtools {
     background-color: rgba(237, 241, 245, 0.8);
-    border: 1px solid #B6C9DD;
+    border: 1px solid var(--tb-global-action--BorderColor);
     z-index: 98;
     overflow: visible;
 }
@@ -136,15 +136,15 @@ a.tb-subreddit-item-count {
 .mod-toolbox-rd .tb-sort-subs {
     float: right;
     margin: 4px;
-    border: 1px solid #B6C9DD;
-    border-left: 2px solid #B6C9DD;
+    border: 1px solid var(--tb-global-action--BorderColor);
+    border-left: 2px solid var(--tb-global-action--BorderColor);
     padding: 3px;
     background-color: white;
     font-size: 13px;
 }
 
 .mod-toolbox-rd .tb-sort-subs:hover {
-    background-color: #E2EEFA;
+    background-color: var(--tb-global-action-button--BackgroundColor--hover);
 }
 
 .mod-toolbox-rd .tb-sort-subs img {

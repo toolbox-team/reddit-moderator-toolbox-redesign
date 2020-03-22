@@ -105,11 +105,11 @@ body.mod-toolbox-rd.mod-toolbox-rd-new-modmail .tb-popup a {
 }
 
 .mod-toolbox-rd .utagger-popup .utagger-type > div:hover {
-    background-color: #e2eefa;
+    background-color: var(--tb-global-action-button--BackgroundColor--hover);
     cursor: pointer;
 }
 .mod-toolbox-rd .utagger-popup .utagger-type input:checked ~ div {
-    background-color: #e2eefa;
+    background-color: var(--tb-global-action-button--BackgroundColor--hover);
 }
 
 .mod-toolbox-rd .utagger-popup .utagger-type > div:before {

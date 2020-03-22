@@ -34,14 +34,14 @@
 }
 
 .mod-toolbox-rd .tb-load-more {
-    background-color: #f7fafd;
+    background-color: var(--tb-global-action-button--BackgroundColor);
     color: #696969;
     font-size: 15px;
     font-weight: bold;
     text-align: center;
     cursor: pointer;
     border-width: 0px 3px 0px 3px;
-    border-color: #b6c9dd;
+    border-color: var(--tb-global-action--BorderColor);
     border-style: solid;
     padding: 5px;
     margin: 5px;
@@ -49,8 +49,8 @@
 }
 
 .mod-toolbox-rd .tb-load-more:hover {
-    border-color: #f7fafd;
-    background-color: #b6c9dd;
+    border-color: var(--tb-global-action-button--BackgroundColor);
+    background-color: var(--tb-global-action--BorderColor);
     color: #ffffff;
 }
 

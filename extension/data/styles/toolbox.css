@@ -175,7 +175,7 @@ body.mod-toolbox-rd.mod-toolbox-extra .tb-input:focus {
     background-color: rgba(226, 238, 250, 1);
     font-size: 11px;
     color: #696969;
-    border: 1px solid #B6C9DD;
+    border: 1px solid var(--tb-global-action--BorderColor);
     text-align: left;
     background-repeat: no-repeat;
     background-position-y: 3px;
@@ -247,7 +247,7 @@ body.mod-toolbox-rd.mod-toolbox-extra .tb-input:focus {
 
 
 .mod-toolbox-rd #tb-context-menu-list li {
-    background: rgba(247, 250, 253, 1);
+    background: rgba(var(--tb-global-list--BackgroundColor), 1);
     border-top: 1px solid #CCD1D7;
     display: flex;
     align-items: center;
@@ -364,7 +364,7 @@ body.mod-toolbox-rd.mod-toolbox-extra .tb-input:focus {
 }
 
 .mod-toolbox-rd .tb-save-warning {
-    background: #f7fafd;
+    background: var(--tb-global-action-button--BackgroundColor);
     color: #ef420b;
     height: 25px;
     line-height: 25px;
@@ -521,12 +521,12 @@ body.mod-toolbox-rd.mod-toolbox-extra .tb-input:focus {
 }
 
 .mod-toolbox-rd .tb-popup-tabs {
-    border-bottom: 1px solid #B6C9DD;
-    background-color: #C7D6E6;
+    border-bottom: 1px solid var(--tb-global-action--BorderColor);
+    background-color: var(--tb-global-nav-button--BackgroundColor);
 }
 
 .mod-toolbox-rd .tb-popup-tabs a {
-    background-color: #C7D6E6;
+    background-color: var(--tb-global-nav-button--BackgroundColor);
     border-right: 1px dotted #A8B5C2;
     display: inline-block;
     padding: 4px;
@@ -535,12 +535,12 @@ body.mod-toolbox-rd.mod-toolbox-extra .tb-input:focus {
 
 .mod-toolbox-rd .tb-popup-tabs a:hover,
 .mod-toolbox-rd .tb-popup-tabs a.active {
-    background-color: #9FBAD6;
-    border-right: 1px solid #9FBAD6;
+    background-color: var(--tb-global-dark-blue--BackgroundColor);
+    border-right: 1px solid var(--tb-global-dark-blue--BackgroundColor);
 }
 .mod-toolbox-rd .tb-popup-tabs a:not(:first-child):hover,
 .mod-toolbox-rd .tb-popup-tabs a:not(:first-child).active {
-    box-shadow: -1px 0 #9FBAD6;
+    box-shadow: -1px 0 var(--tb-global-dark-blue--BackgroundColor);
 }
 
 .mod-toolbox-rd .mod-popup .other-subs {
@@ -657,12 +657,12 @@ body.mod-toolbox-rd .mod-popup .tb-action-button.global-button {
     right: 0;
     left: 0;
     display: block;
-    background-color: #CEE3F8;
+    background-color: var(--tb-global-header--BackgroundColor);
     text-align: center;
     font-weight: bold;
     padding: 0 !important;
     font-size: small;
-    border-bottom: solid 1px #B6C9DD;
+    border-bottom: solid 1px var(--tb-global-action--BorderColor);
     position: relative;
     height: 20px;
     line-height: 20px;
@@ -677,9 +677,9 @@ body.mod-toolbox-rd .mod-popup .tb-action-button.global-button {
     height: 25px;
     line-height: 25px;
     display: block;
-    background-color: #CEE3F8;
+    background-color: var(--tb-global-header--BackgroundColor);
     text-align: center;
-    border-top: solid 1px #B6C9DD;
+    border-top: solid 1px var(--tb-global-action--BorderColor);
 }
 
 .mod-toolbox-rd .tb-debug-header-options {
@@ -687,13 +687,13 @@ body.mod-toolbox-rd .mod-popup .tb-action-button.global-button {
     position: absolute;
     right: 0;
     top: 0;
-    background-color: #C7D6E6;
+    background-color: var(--tb-global-nav-button--BackgroundColor);
     line-height: 20px;
-    border-left: 1px solid #B6C9DD;
+    border-left: 1px solid var(--tb-global-action--BorderColor);
 }
 
 .mod-toolbox-rd .tb-debug-header-options:hover {
-    background-color: #9FBAD6;
+    background-color: var(--tb-global-dark-blue--BackgroundColor);
 }
 
 
@@ -762,7 +762,7 @@ body.mod-toolbox-rd .tb-bracket-button {
     font-size: 11px;
     font-weight: normal;
     border-width: 0 0 0 3px;
-    border-color: #B6C9DD;
+    border-color: var(--tb-global-action--BorderColor);
     border-style: solid;
     box-shadow: none;
     padding: 1px 5px;
@@ -792,7 +792,7 @@ body.mod-toolbox-rd .tb-bracket-button {
 
 body.mod-toolbox-rd .tb-general-button:hover,
 body.mod-toolbox-rd li a.tb-general-button:hover {
-    background-color: #E2EEFA;
+    background-color: var(--tb-global-action-button--BackgroundColor--hover);
     text-decoration: none;
 }
 
@@ -1367,7 +1367,7 @@ body.mod-toolbox-rd .tb-action-button {
     font-variant: normal !important;
     font-weight: normal !important;
     letter-spacing: normal !important;
-    background-color: #F7FAFD !important;
+    background-color: var(--tb-global-action-button--BackgroundColor) !important;
     border-radius: 1px !important;
     border-width: 1px 1px 2px 2px !important;
     border-color: #72869A !important;
@@ -1381,7 +1381,7 @@ body.mod-toolbox-rd .tb-action-button {
 
 body.mod-toolbox-rd .tb-action-button:active {
     border-width: 1px !important;
-    border-color: #9FBAD6 !important;
+    border-color: var(--tb-global-dark-blue--BackgroundColor) !important;
     padding: 2px 6px 3px 6px !important;
     box-shadow: none !important;
     outline: none !important;
@@ -1449,7 +1449,7 @@ body.mod-toolbox-rd .tb-action-button:focus {
 }
 
 body.mod-toolbox-rd .tb-action-button:hover {
-    background-color: #E2EEFA !important;
+    background-color: var(--tb-global-action-button--BackgroundColor--hover) !important;
     text-decoration: none !important;
     outline: none !important;
 }
@@ -1486,7 +1486,7 @@ body.mod-toolbox-rd #tb-bottombar a:not(.tb-action-button):not(.tb-bracket-butto
     padding: 10px;
     min-width: 150px;
     text-align: center;
-    background-color: #CEE3F8;
+    background-color: var(--tb-global-header--BackgroundColor);
     box-shadow: rgba(214, 214, 214, 0.47) 0 1px 3px 1px;
 }
 
@@ -1763,7 +1763,7 @@ TODO: Find out what this is supposed to fix and put that in the comment instead.
     background-color: rgba(226, 238, 250, 1);
     font-size: 11px;
     color: #696969;
-    border: 1px solid #B6C9DD;
+    border: 1px solid var(--tb-global-action--BorderColor);
     text-align: left;
     z-index: 501;
 }
@@ -1781,7 +1781,7 @@ TODO: Find out what this is supposed to fix and put that in the comment instead.
 }
 
 .mod-toolbox-rd #tb-search-suggest tr {
-    background: rgba(247, 250, 253, 1);
+    background: rgba(var(--tb-global-list--BackgroundColor), 1);
     border-bottom: solid 1px #CCD1D7;
 }
 
@@ -1807,7 +1807,7 @@ TODO: Find out what this is supposed to fix and put that in the comment instead.
     background-color: rgba(226, 238, 250, 1);
     font-size: 11px;
     color: #696969;
-    border: 1px solid #B6C9DD;
+    border: 1px solid var(--tb-global-action--BorderColor);
     border-bottom: 0;
     text-align: left;
     z-index: 501;
@@ -1817,7 +1817,7 @@ TODO: Find out what this is supposed to fix and put that in the comment instead.
     padding-right: 10px;
     padding-bottom: 3px;
     padding-left: 10px;
-    background: rgb(247, 250, 253);
+    background: rgb(var(--tb-global-list--BackgroundColor));
     border-bottom: 1px solid rgb(204, 209, 215);
 }
 

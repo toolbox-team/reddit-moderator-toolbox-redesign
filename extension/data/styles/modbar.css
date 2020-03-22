@@ -24,7 +24,7 @@
     text-align: left;
     background-color: rgba(206, 227, 248, 0.86);
     color: #696969;
-    border-top: solid 1px #9FBAD6;
+    border-top: solid 1px var(--tb-global-blue-bg);
 
     /* Rules to work with subreddit styles */
     box-sizing: content-box !important;
@@ -34,7 +34,7 @@
 }
 .mod-toolbox-rd #tb-bottombar-hidden {
     right: unset;
-    border-right: 1px solid #9FBAD6;
+    border-right: 1px solid var(--tb-global-dark-blue--BackgroundColor);
 }
 /* Compact mode: Unhide button is much smaller */
 .mod-toolbox-rd .tb-bottombar-compact .tb-bottombar-unhide {
@@ -71,8 +71,8 @@
 /* Buttons for personal notes, mod subs */
 .mod-toolbox-rd .tb-modbar-button {
     background: rgba(199, 214, 230, 0.8);
-    border-left: 1px solid #9FBAD6;
-    border-right: 1px solid #9FBAD6;
+    border-left: 1px solid var(--tb-global-dark-blue--BackgroundColor);
+    border-right: 1px solid var(--tb-global-dark-blue--BackgroundColor);
     display: inline-block;
     vertical-align: top;
     height: 100%;
@@ -80,7 +80,7 @@
     padding: 0 3px;
 }
 .mod-toolbox-rd .tb-modbar-button:hover {
-    background: #9FBAD6;
+    background: var(--tb-global-dark-blue--BackgroundColor);
 }
 
 /* Individual button ordering */

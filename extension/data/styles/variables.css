@@ -1,0 +1,10 @@
+.mod-toolbox-rd {
+    --tb-global-dark-blue--BackgroundColor: #9FBAD6;
+    --tb-global-nav-button--BackgroundColor: #C7D6E6;
+    --tb-global-action-button--BackgroundColor: #F7FAFD;
+    --tb-global-action-button--BackgroundColor--hover: #E2EEFA;
+    --tb-global-action--BorderColor: #B6C9DD;
+    --tb-global-header--BackgroundColor: #CEE3F8;
+
+    --tb-global-list--BackgroundColor: 247, 250, 253;
+}

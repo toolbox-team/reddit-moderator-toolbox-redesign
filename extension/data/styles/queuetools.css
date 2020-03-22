@@ -86,7 +86,7 @@
 
 .mod-toolbox-rd .tb-action-table th {
     font-weight: bold;
-    background-color: #cee3f8;
+    background-color: var(--tb-global-header--BackgroundColor);
     color: #000000;
 }
 

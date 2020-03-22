@@ -1,14 +1,14 @@
 .mod-toolbox-rd #tb-flatview-search {
-    background-color: #F7FAFD;
+    background-color: var(--tb-global-action-button--BackgroundColor);
     color: #696969;
-    border: 1px solid #B6C9DD;
+    border: 1px solid var(--tb-global-action--BorderColor);
     padding: 3px;
     margin: 11px
 }
 
 .mod-toolbox-rd #tb-flatview-search-count {
-    background-color: #B6C9DD;
+    background-color: var(--tb-global-action--BorderColor);
     padding: 4px;
-    color: #F7FAFD;
+    color: var(--tb-global-action-button--BackgroundColor);
     font-weight: bold;
 }

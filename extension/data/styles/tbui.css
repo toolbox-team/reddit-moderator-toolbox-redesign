@@ -18,7 +18,7 @@
 .mod-toolbox-rd .tb-popup-header,
 .mod-toolbox-rd .tb-notification-header {
     display: flex;
-    background-color: #CEE3F8;
+    background-color: var(--tb-global-header--BackgroundColor);
     line-height: 26px;
     white-space: nowrap;
 }
@@ -59,7 +59,7 @@
 .mod-toolbox-rd .tb-popup-header .buttons a,
 .mod-toolbox-rd .tb-notification-header .buttons a {
     display: flex;
-    background-color: #C7D6E6;
+    background-color: var(--tb-global-nav-button--BackgroundColor);
     width: 36px;
     margin-left: 1px;
     text-align: center;
@@ -70,7 +70,7 @@
 .mod-toolbox-rd .tb-window-header .buttons a:hover,
 .mod-toolbox-rd .tb-popup-header .buttons a:hover,
 .mod-toolbox-rd .tb-notification-header .buttons a:hover {
-    background-color: #9FBAD6;
+    background-color: var(--tb-global-dark-blue--BackgroundColor);
 }
 
 /* Content resets */
@@ -93,7 +93,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #CEE3F8;
+    background-color: var(--tb-global-header--BackgroundColor);
 }
 /* Window footers are slightly larger */
 .mod-toolbox-rd .tb-window-footer {
@@ -109,7 +109,7 @@
 }
 
 .mod-toolbox-rd .tb-window-tabs a {
-    background-color: #C7D6E6;
+    background-color: var(--tb-global-nav-button--BackgroundColor);
     display: block;
     padding: 7px;
     box-sizing: border-box !important;
@@ -117,7 +117,7 @@
 }
 .mod-toolbox-rd .tb-window-tabs a.active,
 .mod-toolbox-rd .tb-window-tabs a:hover {
-    background-color: #9FBAD6;
+    background-color: var(--tb-global-dark-blue--BackgroundColor);
 }
 .mod-toolbox-rd .tb-window-tabs-header {
     padding: 7px 0;
@@ -126,7 +126,7 @@
     font-style: italic;
 }
 .mod-toolbox-rd .tb-window-tabs-category {
-    background-color: #C7D6E6;
+    background-color: var(--tb-global-nav-button--BackgroundColor);
     padding-left: 7px;
 }
 .mod-toolbox-rd .tb-window-tabs-category a {
@@ -154,7 +154,7 @@
     display: flex;
     width: 100%;
     flex-direction: row;
-    background: #c7d6e6;
+    background: var(--tb-global-nav-button--BackgroundColor);
     /*
      * just to be safe, though if the tabs need multiple lines you should
      * probably not be using horizontal tabs

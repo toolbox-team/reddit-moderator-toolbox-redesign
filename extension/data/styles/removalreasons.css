@@ -17,7 +17,7 @@
     right: 0;
     left: 0;
     display: block;
-    background-color: #CEE3F8;
+    background-color: var(--tb-global-header--BackgroundColor);
     text-align: center;
     font-weight: bold;
     padding: 4px !important;
@@ -36,7 +36,7 @@
     height: 30px;
     line-height: 30px;
     display: block;
-    background-color: #CEE3F8;
+    background-color: var(--tb-global-header--BackgroundColor);
     text-align: center;
 }
 

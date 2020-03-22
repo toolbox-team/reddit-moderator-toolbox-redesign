@@ -39,13 +39,13 @@
     width: 165px;
     height: 75px;
     padding: 5px;
-    background: #C7D6E6;
+    background: var(--tb-global-nav-button--BackgroundColor);
     box-shadow: 0 -1px #FFF;
     overflow: hidden;
 }
 /* Hack to get background on the list */
 .mod-toolbox-rd .tb-popup.personal-notes-popup .tb-popup-content {
-    box-shadow: inset 175px 0 #C7D6E6;
+    box-shadow: inset 175px 0 var(--tb-global-nav-button--BackgroundColor);
     padding: 0 !important;
     height: 100%;
 }
@@ -58,14 +58,14 @@
     overflow: auto;
 }
 .mod-toolbox-rd #tb-personal-notes-ul li {
-    background: #C7D6E6;
+    background: var(--tb-global-nav-button--BackgroundColor);
     border-bottom: 1px solid #FFF;
     padding: 5px 5px 5px 25px;
     position: relative;
     word-wrap: break-word;
 }
 .mod-toolbox-rd #tb-personal-notes-ul .tb-personal-notes-active {
-    background: #9FBAD6
+    background: var(--tb-global-dark-blue--BackgroundColor)
 }
 .mod-toolbox-rd #tb-personal-notes-ul .tb-personal-notes-active .tb-personal-note-link {
     color: #000;
