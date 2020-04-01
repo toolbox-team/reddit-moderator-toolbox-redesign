@@ -53,6 +53,13 @@ function generalSettings () {
         title: 'Make the context menu only open when you click on it',
     });
 
+    self.register_setting('redirectMobileToDesktop', {
+        type: 'boolean',
+        default: false,
+        advanced: false,
+        title: 'Redirect mobile reddit to desktop.',
+    });
+
     self.init = function () {
         self.log('general reporting for duty!');
     };

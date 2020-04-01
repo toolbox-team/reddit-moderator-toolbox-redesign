@@ -38,7 +38,8 @@
             "data/background/handlers/reload.js",
             "data/background/handlers/cache.js",
             "data/background/handlers/globalmessage.js",
-            "data/background/handlers/notifications.js"
+            "data/background/handlers/notifications.js",
+            "data/background/handlers/mobilecookie.js"
         ],
         "persistent": true
     },

@@ -263,6 +263,15 @@ function storagewrapper () {
                 return;
             }
 
+            // Check for mobile reddit
+            if ($body.find('.AppMainPage').length && getSetting('GenSettings', 'redirectMobileToDesktop', false)) {
+                browser.runtime.sendMessage({
+                    action: 'tb-mobile-cookie',
+                }).then(() => {
+                    window.location.reload();
+                });
+            }
+
             if (loggedinOld || loggedinRedesign) {
                 $body.addClass('mod-toolbox-rd');
                 $body.addClass('mod-toolbox');
