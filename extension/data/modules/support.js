@@ -85,4 +85,6 @@ Info| &nbsp;
 
 window.addEventListener('TBModuleLoaded', () => {
     support();
+}, {
+    once: true,
 });

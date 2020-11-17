@@ -250,11 +250,11 @@ function domaintagger () {
             let {config} = TBCore;
 
             TBApi.readFromWiki(subreddit, 'toolbox', true).then(resp => {
-                if (resp === TBCore.WIKI_PAGE_UNKNOWN) {
+                if (resp === TBApi.WIKI_PAGE_UNKNOWN) {
                     return;
                 }
 
-                if (resp === TBCore.NO_WIKI_PAGE) {
+                if (resp === TBApi.NO_WIKI_PAGE) {
                     config.domainTags = [domainTag];
                     postToWiki(subreddit, config, 'domain tagger: create new toolbox config');
                     return;
@@ -314,4 +314,6 @@ function domaintagger () {
 
 window.addEventListener('TBModuleLoaded', () => {
     domaintagger();
+}, {
+    once: true,
 });

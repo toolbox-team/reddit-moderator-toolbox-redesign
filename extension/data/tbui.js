@@ -1,7 +1,8 @@
 'use strict';
+function TBuiInitWrapper () {
+    /** @namespace  TBui */
+    const TBui = window.TBui = {}
 
-/** @namespace  TBui */
-(function (TBui) {
     const logger = TBLog('TBui');
     const $body = $('body');
 
@@ -23,6 +24,8 @@
         contextMenuLocation = TBStorage.getSetting('GenSettings', 'contextMenuLocation', 'left');
         contextMenuAttention = TBStorage.getSetting('GenSettings', 'contextMenuAttention', 'open');
         contextMenuClick = TBStorage.getSetting('GenSettings', 'contextMenuClick', false);
+    }, {
+        once: true,
     });
 
     /**
@@ -502,12 +505,12 @@
         selected = selected instanceof Array ? selected : [];
 
         const $select_multiple = $(`
-                  <div class="select-multiple">
-                      <select class="selected-list left tb-action-button"></select>&nbsp;<button class="remove-item right tb-action-button">remove</button>&nbsp;
-                      <select class="available-list left tb-action-button"></select>&nbsp;<button class="add-item right tb-action-button">add</button>&nbsp;
-                      <div style="clear:both"></div>
-                  </div>
-              `),
+                <div class="select-multiple">
+                    <select class="selected-list left tb-action-button"></select>&nbsp;<button class="remove-item right tb-action-button">remove</button>&nbsp;
+                    <select class="available-list left tb-action-button"></select>&nbsp;<button class="add-item right tb-action-button">add</button>&nbsp;
+                    <div style="clear:both"></div>
+                </div>
+            `),
               $selected_list = $select_multiple.find('.selected-list'),
               $available_list = $select_multiple.find('.available-list');
 
@@ -672,7 +675,7 @@
                 $body.append(`<div id="tb-loading-stuff"><span class="tb-loading-content"><img src="${browser.runtime.getURL('data/images/snoo_running.gif')}" alt="loading"> <span class="tb-loading-text">${TBCore.RandomFeedback}</span></span></div>`);
                 $body.append('<div id="tb-loading"></div>');
 
-                const $randomFeedbackWindow = $('body').find('#tb-loading-stuff'),
+                const $randomFeedbackWindow = $body.find('#tb-loading-stuff'),
                       randomFeedbackLeftMargin = $randomFeedbackWindow.outerWidth() / 2,
                       randomFeedbackTopMargin = $randomFeedbackWindow.outerHeight() / 2;
 
@@ -690,8 +693,8 @@
                 // if done and the only instance
             } else if (!createOrDestroy && TBui.longLoadArray.length === 1) {
                 $('head').find('#tb-long-load-style').remove();
-                $('body').find('#tb-loading').remove();
-                $('body').find('#tb-loading-stuff').remove();
+                $body.find('#tb-loading').remove();
+                $body.find('#tb-loading-stuff').remove();
                 TBui.longLoadArray.pop();
 
                 // if done but other process still running
@@ -728,7 +731,7 @@
                 // if done and the only instance
             } else if (!createOrDestroy && TBui.longLoadArrayNonPersistent.length === 1) {
                 $('head').find('#tb-long-load-style-non-persistent').remove();
-                $('body').find('#tb-loading-non-persistent').remove();
+                $body.find('#tb-loading-non-persistent').remove();
                 TBui.longLoadArrayNonPersistent.pop();
 
                 // if done but other process still running
@@ -1513,7 +1516,7 @@
         <div class="tb-comment-data">
             <ul class="tb-comment-details">
                 ${commentControversiality ? `<li> Controversial score: ${commentControversiality}.</li>` : ''}
-             </ul>
+            </ul>
         </div>`);
         if (commentStatus !== 'neutral') {
             $commentData.find('.tb-comment-details').append(`<li class="tb-status-${commentStatus}">${commentStatus} ${commentActionByOn ? commentActionByOn : ''}.</li>`);
@@ -1949,4 +1952,12 @@
         return TBui.getBestTextColor.cache[bgColor];
     };
     TBui.getBestTextColor.cache = {};
-})(window.TBui = window.TBui || {});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('readystatechange', TBuiInitWrapper, {
+        once: true,
+    });
+} else {
+    TBuiInitWrapper();
+}

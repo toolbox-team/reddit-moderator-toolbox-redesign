@@ -241,4 +241,6 @@ function trouble () {
 
 window.addEventListener('TBModuleLoaded', () => {
     trouble(); // run
+}, {
+    once: true,
 });

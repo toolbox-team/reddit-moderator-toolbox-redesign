@@ -515,4 +515,6 @@ function newmodmailpro () {
 
 window.addEventListener('TBModuleLoaded', () => {
     newmodmailpro();
+}, {
+    once: true,
 });

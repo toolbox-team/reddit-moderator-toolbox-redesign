@@ -6,6 +6,10 @@ const start = performance.now();
 let previousName = 'start';
 let previous = start;
 
+document.addEventListener('readystatechange', () => {
+    console.log(document.readyState, performance.now());
+});
+
 function profileResults (name, number) {
     console.groupCollapsed('Profiling thing v5:', name, number);
     if (name === 'start') {

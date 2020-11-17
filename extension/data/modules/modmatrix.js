@@ -796,4 +796,6 @@ ${renderedMarkdown}
 
 window.addEventListener('TBModuleLoaded', () => {
     modmatrix();
+}, {
+    once: true,
 });

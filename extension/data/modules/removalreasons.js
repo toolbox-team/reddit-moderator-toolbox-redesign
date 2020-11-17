@@ -135,7 +135,7 @@ function removalreasons () {
 
             // OK, they are not cached.  Try the wiki.
             TBApi.readFromWiki(subreddit, 'toolbox', true).then(resp => {
-                if (!resp || resp === TBCore.WIKI_PAGE_UNKNOWN || resp === TBCore.NO_WIKI_PAGE || !resp.removalReasons) {
+                if (!resp || resp === TBApi.WIKI_PAGE_UNKNOWN || resp === TBApi.NO_WIKI_PAGE || !resp.removalReasons) {
                     self.log('failed: wiki config');
                     callback(false);
                     return;
@@ -938,4 +938,6 @@ function removalreasons () {
 
 window.addEventListener('TBModuleLoaded', () => {
     removalreasons();
+}, {
+    once: true,
 });

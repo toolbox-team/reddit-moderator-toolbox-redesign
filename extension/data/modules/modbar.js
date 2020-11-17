@@ -538,6 +538,8 @@ function modbar () {
 
 window.addEventListener('TBModuleLoaded', () => {
     modbar();
+}, {
+    once: true,
 });
 function getDirectingTo () {
     let url = window.location.href.replace(/^http:/, 'https:'),

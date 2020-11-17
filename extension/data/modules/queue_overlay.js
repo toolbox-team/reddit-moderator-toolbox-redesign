@@ -309,4 +309,6 @@ function queueOverlay () {
 
 window.addEventListener('TBModuleLoaded', () => {
     queueOverlay();
+}, {
+    once: true,
 });

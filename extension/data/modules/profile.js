@@ -923,4 +923,6 @@ function profilepro () {
 
 window.addEventListener('TBModuleLoaded', () => {
     profilepro();
+}, {
+    once: true,
 });

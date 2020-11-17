@@ -314,4 +314,6 @@ function achievements () {
 
 window.addEventListener('TBModuleLoaded', () => {
     achievements();
+}, {
+    once: true,
 });

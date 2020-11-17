@@ -284,4 +284,6 @@ function syntax () {
 
 window.addEventListener('TBModuleLoaded', () => {
     syntax();
+}, {
+    once: true,
 });

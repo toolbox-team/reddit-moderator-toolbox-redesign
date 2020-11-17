@@ -574,9 +574,9 @@ function usernotes () {
                 if (!success && pageError) {
                     self.log('  Page error');
                     switch (pageError) {
-                    case TBCore.WIKI_PAGE_UNKNOWN:
+                    case TBApi.WIKI_PAGE_UNKNOWN:
                         break;
-                    case TBCore.NO_WIKI_PAGE:
+                    case TBApi.NO_WIKI_PAGE:
                         notes = noteSkel;
                         notes.users[user] = userNotes;
                         self.saveUserNotes(subreddit, notes, 'create usernotes config', succ => {
@@ -1141,15 +1141,15 @@ function usernotes () {
         TBApi.readFromWiki(subreddit, 'usernotes', true).then(resp => {
         // Errors when reading notes
         // // These errors are bad
-            if (!resp || resp === TBCore.WIKI_PAGE_UNKNOWN) {
+            if (!resp || resp === TBApi.WIKI_PAGE_UNKNOWN) {
                 self.log('Usernotes read error: WIKI_PAGE_UNKNOWN');
-                returnFalse(TBCore.WIKI_PAGE_UNKNOWN);
+                returnFalse(TBApi.WIKI_PAGE_UNKNOWN);
                 return;
             }
-            if (resp === TBCore.NO_WIKI_PAGE) {
+            if (resp === TBApi.NO_WIKI_PAGE) {
                 TBCore.updateCache('noNotes', subreddit, false);
                 self.log('Usernotes read error: NO_WIKI_PAGE');
-                returnFalse(TBCore.NO_WIKI_PAGE);
+                returnFalse(TBApi.NO_WIKI_PAGE);
                 return;
             }
             // // No notes exist in wiki page
@@ -1487,4 +1487,6 @@ function usernotes () {
 
 window.addEventListener('TBModuleLoaded', () => {
     usernotes();
+}, {
+    once: true,
 });

@@ -786,4 +786,6 @@ function notifiermod () {
 
 window.addEventListener('TBModuleLoaded', () => {
     notifiermod();
+}, {
+    once: true,
 });

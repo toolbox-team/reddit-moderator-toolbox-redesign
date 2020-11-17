@@ -7,6 +7,14 @@
 (function (TBApi) {
     const logger = TBLog('TBApi');
 
+    TBApi.modhash = '';
+    TBApi.NO_WIKI_PAGE = 'NO_WIKI_PAGE';
+    TBApi.WIKI_PAGE_UNKNOWN = 'WIKI_PAGE_UNKNOWN';
+
+    TBApi.setModHash = modhash => {
+        TBApi.modhash = modhash;
+    };
+
     /**
      * Sends a generic HTTP request through the background page.
      * @function
@@ -180,7 +188,7 @@
                 content: data,
                 page,
                 reason,
-                uh: TBCore.modhash,
+                uh: TBApi.modhash,
             });
         } catch (error) {
             logger.error(error);
@@ -201,7 +209,7 @@
                     page,
                     listed: true, // hrm, may need to make this a config setting.
                     permlevel: 2,
-                    uh: TBCore.modhash,
+                    uh: TBApi.modhash,
                 },
             })
 
@@ -224,8 +232,8 @@
      * @returns {Promise} Promises the data of the wiki page. If there is an
      * error reading from the page, one of the following error values may be
      * returned:
-     * - TBCore.WIKI_PAGE_UNKNOWN
-     * - TBCore.NO_WIKI_PAGE
+     * - TBApi.WIKI_PAGE_UNKNOWN
+     * - TBApi.NO_WIKI_PAGE
      * If the isJSON `param` was true, then this will be an object. Otherwise,
      * it will be the raw contents of the wiki as a string.
      */
@@ -234,7 +242,7 @@
         TBApi.getJSON(`/r/${subreddit}/wiki/${page}.json`).then(data => {
             const wikiData = data.data.content_md;
             if (!wikiData) {
-                resolve(TBCore.NO_WIKI_PAGE);
+                resolve(TBApi.NO_WIKI_PAGE);
                 return;
             }
             if (isJSON) {
@@ -244,13 +252,13 @@
                 } catch (err) {
                 // we should really have a INVAILD_DATA error for this.
                     logger.log(err);
-                    resolve(TBCore.NO_WIKI_PAGE);
+                    resolve(TBApi.NO_WIKI_PAGE);
                 }
                 // Moved out of the try so random exceptions don't erase the entire wiki page
                 if (parsedWikiData) {
                     resolve(parsedWikiData);
                 } else {
-                    resolve(TBCore.NO_WIKI_PAGE);
+                    resolve(TBApi.NO_WIKI_PAGE);
                 }
                 return;
             }
@@ -259,7 +267,7 @@
         }).catch(async error => {
             logger.error(`Wiki error (${subreddit}/${page}):`, error);
             if (!error.response) {
-                resolve(TBCore.WIKI_PAGE_UNKNOWN);
+                resolve(TBApi.WIKI_PAGE_UNKNOWN);
                 return;
             }
             let reason;
@@ -270,10 +278,10 @@
             }
 
             if (reason === 'PAGE_NOT_CREATED' || reason === 'WIKI_DISABLED') {
-                resolve(TBCore.NO_WIKI_PAGE);
+                resolve(TBApi.NO_WIKI_PAGE);
             } else {
             // we don't know why it failed, we should not try to write to it.
-                resolve(TBCore.WIKI_PAGE_UNKNOWN);
+                resolve(TBApi.WIKI_PAGE_UNKNOWN);
             }
         });
     });
@@ -326,7 +334,7 @@
         text,
         css_class: cssClass,
         r: subreddit,
-        uh: TBCore.modhash,
+        uh: TBApi.modhash,
     });
 
     /**
@@ -344,7 +352,7 @@
         r: subreddit,
         text,
         css_class: cssClass,
-        uh: TBCore.modhash,
+        uh: TBApi.modhash,
     });
 
     /**
@@ -400,7 +408,7 @@
 
         return TBApi.post('/api/friend', {
             api_type: 'json',
-            uh: TBCore.modhash,
+            uh: TBApi.modhash,
             type: action,
             name: user,
             r: subreddit,
@@ -425,7 +433,7 @@
      */
     TBApi.unfriendUser = (user, action, subreddit) => TBApi.post('/api/unfriend', {
         api_type: 'json',
-        uh: TBCore.modhash,
+        uh: TBApi.modhash,
         type: action,
         name: user,
         r: subreddit,
@@ -442,7 +450,7 @@
     TBApi.distinguishThing = (id, sticky) => TBApi.post('/api/distinguish/yes', {
         id,
         sticky,
-        uh: TBCore.modhash,
+        uh: TBApi.modhash,
     });
 
     /**
@@ -453,7 +461,7 @@
      */
     TBApi.approveThing = id => TBApi.post('/api/approve', {
         id,
-        uh: TBCore.modhash,
+        uh: TBApi.modhash,
     });
 
     /**
@@ -464,7 +472,7 @@
      * @returns {Promise}
      */
     TBApi.removeThing = (id, spam = false) => TBApi.post('/api/remove', {
-        uh: TBCore.modhash,
+        uh: TBApi.modhash,
         id,
         spam,
     });
@@ -477,7 +485,7 @@
      */
     TBApi.markOver18 = id => TBApi.post('/api/marknsfw', {
         id,
-        uh: TBCore.modhash,
+        uh: TBApi.modhash,
     });
 
     /**
@@ -487,7 +495,7 @@
      * @returns {Promise}
      */
     TBApi.unMarkOver18 = id => TBApi.post('/api/unmarknsfw', {
-        uh: TBCore.modhash,
+        uh: TBApi.modhash,
         id,
     });
 
@@ -498,7 +506,7 @@
      */
     TBApi.lock = id => TBApi.post('/api/lock', {
         id,
-        uh: TBCore.modhash,
+        uh: TBApi.modhash,
     });
 
     /**
@@ -507,7 +515,7 @@
      * @returns {Promise} Resolves to response data or rejects with a jqXHR
      */
     TBApi.unlock = id => TBApi.post('/api/unlock', {
-        uh: TBCore.modhash,
+        uh: TBApi.modhash,
         id,
     });
 
@@ -523,7 +531,7 @@
         id,
         num,
         state,
-        uh: TBCore.modhash,
+        uh: TBApi.modhash,
     });
 
     /**
@@ -544,7 +552,7 @@
         try {
             const response = await TBApi.post('/api/comment', {
                 parent,
-                uh: TBCore.modhash,
+                uh: TBApi.modhash,
                 text,
                 api_type: 'json',
             });
@@ -576,7 +584,7 @@
                 kind: 'link',
                 resubmit: 'true',
                 url: link,
-                uh: TBCore.modhash,
+                uh: TBApi.modhash,
                 title,
                 sr: subreddit,
                 sendreplies: 'true', // this is the default on reddit.com, so it should be our default.
@@ -613,7 +621,7 @@
                 subject: subject.substr(0, 99),
                 text: message,
                 to: user,
-                uh: TBCore.modhash,
+                uh: TBApi.modhash,
                 api_type: 'json',
             });
             if (Object.prototype.hasOwnProperty.call(response.json, 'errors') && response.json.errors.length > 0) {
@@ -638,7 +646,7 @@
     TBApi.markMessageRead = id => TBApi.post('/api/read_message', {
         api_type: 'json',
         id,
-        uh: TBCore.modhash,
+        uh: TBApi.modhash,
     });
 
     /**
@@ -647,7 +655,7 @@
      * @returns {Promise} Resolves to JSON user info or rejects with error text
      */
     TBApi.aboutUser = user => TBApi.getJSON(`/user/${user}/about.json`, {
-        uh: TBCore.modhash,
+        uh: TBApi.modhash,
     }).then(response => {
         TBStorage.purifyObject(response);
         return response;
@@ -659,7 +667,7 @@
      * @returns {Promise} Resolves to a number or rejects an error string
      */
     TBApi.getLastActive = user => TBApi.getJSON(`/user/${user}.json?limit=1&sort=new`, {
-        uh: TBCore.modhash,
+        uh: TBApi.modhash,
     }).then(response => {
         TBStorage.purifyObject(response);
         return response.data.children[0].data.created_utc;
@@ -673,7 +681,7 @@
      * @returns {Promise} Resolves to the rules as JSON or rejects with an error string
      */
     TBApi.getRules = sub => TBApi.getJSON(`/r/${sub}/about/rules.json`, {
-        uh: TBCore.modhash,
+        uh: TBApi.modhash,
     }).then(response => {
         TBStorage.purifyObject(response);
         return response;
@@ -685,7 +693,7 @@
      * @returns {Promise} Resolves to an object containing the reports or throws an error string
      */
     TBApi.getReportReasons = postURL => TBApi.getJSON(`${postURL}.json?limit=1`, {
-        uh: TBCore.modhash,
+        uh: TBApi.modhash,
     }).then(response => {
         TBStorage.purifyObject(response);
         if (typeof callback !== 'undefined') {

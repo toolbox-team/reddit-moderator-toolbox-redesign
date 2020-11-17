@@ -684,4 +684,6 @@ function modbutton () {
 
 window.addEventListener('TBModuleLoaded', () => {
     modbutton();
+}, {
+    once: true,
 });

@@ -826,4 +826,6 @@ function historybutton () {
 
 window.addEventListener('TBModuleLoaded', () => {
     historybutton();
+}, {
+    once: true,
 });

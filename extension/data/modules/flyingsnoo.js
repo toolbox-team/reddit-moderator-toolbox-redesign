@@ -139,4 +139,6 @@ function flyingsnoo () {
 
 window.addEventListener('TBModuleLoaded', () => {
     flyingsnoo();
+}, {
+    once: true,
 });

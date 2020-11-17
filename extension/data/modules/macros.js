@@ -21,13 +21,13 @@ function modmacros () {
                 callback(checkConfig(TBCore.configCache[sub]), TBCore.configCache[sub].modMacros);
             } else {
                 TBApi.readFromWiki(sub, 'toolbox', true).then(resp => {
-                    if (!resp || resp === TBCore.WIKI_PAGE_UNKNOWN) {
-                        self.log('!resp || resp === TBCore.WIKI_PAGE_UNKNOWN');
+                    if (!resp || resp === TBApi.WIKI_PAGE_UNKNOWN) {
+                        self.log('!resp || resp === TBApi.WIKI_PAGE_UNKNOWN');
                         callback(false);
                     }
 
-                    if (resp === TBCore.NO_WIKI_PAGE) {
-                        self.log('resp === TBCore.NO_WIKI_PAGE');
+                    if (resp === TBApi.NO_WIKI_PAGE) {
+                        self.log('resp === TBApi.NO_WIKI_PAGE');
                         TBCore.updateCache('noConfig', sub, false);
                         callback(false);
                     }
@@ -554,4 +554,6 @@ function modmacros () {
 
 window.addEventListener('TBModuleLoaded', () => {
     modmacros();
+}, {
+    once: true,
 });

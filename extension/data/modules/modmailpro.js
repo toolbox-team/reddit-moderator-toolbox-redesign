@@ -1048,4 +1048,6 @@ function modmailpro () {
 
 window.addEventListener('TBModuleLoaded', () => {
     modmailpro();
+}, {
+    once: true,
 });

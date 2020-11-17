@@ -62,4 +62,6 @@ function generalSettings () {
 
 window.addEventListener('TBModuleLoaded', () => {
     generalSettings();
+}, {
+    once: true,
 });

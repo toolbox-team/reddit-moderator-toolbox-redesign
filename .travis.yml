@@ -7,11 +7,6 @@ cache:
     - node_modules
 matrix:
   include:
-    - env: TB_JOB=unit_test
-      script:
-        - npm run test:coverage
-        - npm run codecov
-        - npm run coveralls
     - env: TB_JOB=eslint_test
       script:
         - npm run eslint

@@ -518,4 +518,6 @@ function betterbuttons () {
 
 window.addEventListener('TBModuleLoaded', () => {
     betterbuttons();
+}, {
+    once: true,
 });

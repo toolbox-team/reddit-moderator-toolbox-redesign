@@ -548,4 +548,6 @@ function comments () {
 
 window.addEventListener('TBModuleLoaded', () => {
     comments();
+}, {
+    once: true,
 });

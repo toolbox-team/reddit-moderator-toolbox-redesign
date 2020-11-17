@@ -380,12 +380,12 @@ function queuetools () {
                     <p><label><input type="checkbox" class="choice" name="links" /> submissions</label></p>
                     <p><label><input type="checkbox" class="choice" name="self" /> text posts</label></p>
                     <p><label><input type="checkbox" class="choice" name="flair" /> posts with flair</label></p>
-                    
+
                     <p class="divider"><input type="text" class="choice tb-input" name="domain" placeholder="domain..." /></p>
                     <p><input type="text" class="choice tb-input" name="user" placeholder="user..." /></p>
                     <p><input type="text" class="choice tb-input" name="title" placeholder="title..." /></p>
                     <p><input type="text" class="choice tb-input" name="subreddit" placeholder="subreddit..." /></p>
-                    
+
                     <h2 class="divider">Conditional</h2>
                     <p><input type="text" class="choice tb-input" name="pointsgt" placeholder="points >..." /></p>
                     <p><input type="text" class="choice tb-input" name="pointslt" placeholder="points <..." /></p>
@@ -1439,4 +1439,6 @@ Action reason: ${value.data.details}
 
 window.addEventListener('TBModuleLoaded', () => {
     queuetools();
+}, {
+    once: true,
 });

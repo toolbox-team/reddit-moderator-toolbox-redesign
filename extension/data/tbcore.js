@@ -4,22 +4,22 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
     (function (TBCore) {
         // We need these before we can do anything.
         TBCore.userDetails = userDetails;
-        TBCore.modhash = userDetails.data.modhash;
+        TBCore.modhash = TBApi.modhash;
 
         TBCore.logged = userDetails.data.name;
 
         TBCore.post_site = $('.redditname:not(.pagename) a:first').html(); // This may need to be changed to regex, if this is unreliable.
-
+        const $body = $('body');
         if (window.location.hostname === 'mod.reddit.com') {
-            $('body').addClass('mod-toolbox-new-modmail');
+            $body.addClass('mod-toolbox-new-modmail');
         }
 
         // new profiles have some weird css going on. This remedies the weirdness...
         window.addEventListener('TBNewPage', event => {
             if (event.detail.pageType === 'userProfile') {
-                $('body').addClass('mod-toolbox-profile');
+                $body.addClass('mod-toolbox-profile');
             } else {
-                $('body').removeClass('mod-toolbox-profile');
+                $body.removeClass('mod-toolbox-profile');
             }
         });
 
@@ -114,7 +114,7 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
         // Public variables
 
         TBCore.isOldReddit = $('#header').length;
-        TBCore.isEmbedded = $('body').hasClass('embedded-page');
+        TBCore.isEmbedded = $body.hasClass('embedded-page');
 
         TBCore.isEditUserPage = location.pathname.match(/\/about\/(?:contributors|moderator|banned)\/?/);
         TBCore.isModmail = location.pathname.match(/(\/message\/(?:moderator)\/?)|(\/r\/.*?\/about\/message\/inbox\/?)/);
@@ -148,10 +148,8 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
         TBCore.notesMinSchema = 4;
         TBCore.notesDeprecatedSchema = 4;
         TBCore.notesMaxSchema = 6; // The non-default max version (to allow phase-in schema releases)
-        TBCore.NO_WIKI_PAGE = 'NO_WIKI_PAGE';
-        TBCore.WIKI_PAGE_UNKNOWN = 'WIKI_PAGE_UNKNOWN';
         TBCore.isNewModmail = location.host === 'mod.reddit.com';
-        TBCore.isNewMMThread = $('body').find('.ThreadViewer').length > 0;
+        TBCore.isNewMMThread = $body.find('.ThreadViewer').length > 0;
         TBCore.pageDetails = {};
         TBCore.isExtension = true;
         TBCore.RandomQuote = randomQuotes[Math.floor(Math.random() * randomQuotes.length)];
@@ -196,9 +194,9 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
             return;
         }
 
-        $('body').addClass('mod-toolbox-rd');
+        $body.addClass('mod-toolbox-rd');
         // Bit hacky maybe but allows us more flexibility in specificity.
-        $('body').addClass('mod-toolbox-extra');
+        $body.addClass('mod-toolbox-extra');
 
         // Add icon font
         $('head').append(`<style>
@@ -601,7 +599,7 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
             if (showClose) {
                 $noteDiv.append(`<i class="note-close tb-icons" title="Close">${TBui.icons.close}</i>`);
             }
-            $noteDiv.appendTo('body');
+            $noteDiv.appendTo($body);
 
             window.addEventListener('tbSingleSettingUpdate', event => {
                 const settingDetail = event.detail;
@@ -819,7 +817,6 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
 
             // declare what we will need.
             const $sender = $(sender);
-            const $body = $('body');
 
             let subreddit,
                 permalink,
@@ -1220,7 +1217,7 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
                 }
             }
 
-            function timer (count, $body, ratelimitRemaining) {
+            function timer (count, ratelimitRemaining) {
                 count -= 1;
                 if (count <= 0) {
                     $body.find('#ratelimit-counter').empty();
@@ -1241,8 +1238,6 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
 
             function updateRateLimit () {
                 TBApi.getRatelimit().then(({ratelimitReset, ratelimitRemaining}) => {
-                    const $body = $('body');
-
                     if (!$body.find('#ratelimit-counter').length) {
                         $('div[role="main"].content').append('<span id="ratelimit-counter"></span>');
                     }
@@ -1253,7 +1248,7 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
                             counter = 0;
 
                         counter = setInterval(() => {
-                            count = timer(count, $body, ratelimitRemaining);
+                            count = timer(count, ratelimitRemaining);
                             if (count <= 0) {
                                 clearInterval(counter);
                                 doChunk();
@@ -1353,7 +1348,7 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
 
         TBCore.importSettings = function (subreddit, callback) {
             TBApi.readFromWiki(subreddit, 'tbsettings', true).then(resp => {
-                if (!resp || resp === TBCore.WIKI_PAGE_UNKNOWN || resp === TBCore.NO_WIKI_PAGE) {
+                if (!resp || resp === TBApi.WIKI_PAGE_UNKNOWN || resp === TBApi.NO_WIKI_PAGE) {
                     logger.log('Error loading wiki page');
                     return;
                 }
@@ -1447,10 +1442,10 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
                 callback(TBCore.configCache[sub], sub);
             } else {
                 TBApi.readFromWiki(sub, 'toolbox', true).then(resp => {
-                    if (!resp || resp === TBCore.WIKI_PAGE_UNKNOWN) {
+                    if (!resp || resp === TBApi.WIKI_PAGE_UNKNOWN) {
                         // Complete and utter failure
                         callback(false, sub);
-                    } else if (resp === TBCore.NO_WIKI_PAGE) {
+                    } else if (resp === TBApi.NO_WIKI_PAGE) {
                         // Subreddit not configured yet
                         TBCore.updateCache('noConfig', sub, false);
                         callback(false, sub);
@@ -1815,7 +1810,7 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
         // get toolbox news
         (function getNotes () {
             TBApi.readFromWiki('toolbox', 'tbnotes', true).then(resp => {
-                if (!resp || resp === TBCore.WIKI_PAGE_UNKNOWN || resp === TBCore.NO_WIKI_PAGE || resp.length < 1) {
+                if (!resp || resp === TBApi.WIKI_PAGE_UNKNOWN || resp === TBApi.NO_WIKI_PAGE || resp.length < 1) {
                     return;
                 }
                 TBStorage.purifyObject(resp);
@@ -1827,7 +1822,7 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
 
             if (betaRelease) {
                 TBApi.readFromWiki('tb_beta', 'tbnotes', true).then(resp => {
-                    if (!resp || resp === TBCore.WIKI_PAGE_UNKNOWN || resp === TBCore.NO_WIKI_PAGE || resp.length < 1) {
+                    if (!resp || resp === TBApi.WIKI_PAGE_UNKNOWN || resp === TBApi.NO_WIKI_PAGE || resp.length < 1) {
                         return;
                     }
                     TBStorage.purifyObject(resp);
@@ -1840,7 +1835,7 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
             // check dev sub, if debugMode
             if (TBCore.debugMode) {
                 TBApi.readFromWiki('tb_dev', 'tbnotes', true).then(resp => {
-                    if (!resp || resp === TBCore.WIKI_PAGE_UNKNOWN || resp === TBCore.NO_WIKI_PAGE || resp.length < 1) {
+                    if (!resp || resp === TBApi.WIKI_PAGE_UNKNOWN || resp === TBApi.NO_WIKI_PAGE || resp.length < 1) {
                         TBCore.devMode = false;
                         TBCore.devModeLock = true;
                         return;
@@ -1857,71 +1852,11 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
 
 (function () {
     const logger = TBLog('TBCore init');
+
     // wait for storage
-    function getModSubs (after, callback) {
-        let modSubs = [];
-        TBApi.getJSON('/subreddits/mine/moderator.json', {
-            after,
-            limit: 100,
-        }).then(json => {
-            TBStorage.purifyObject(json);
-            modSubs = modSubs.concat(json.data.children);
-
-            if (json.data.after) {
-                getModSubs(json.data.after, subs => callback(modSubs.concat(subs)));
-            } else {
-                return callback(modSubs);
-            }
-        }).catch(error => {
-            logger.log('getModSubs failed', error);
-            if (error.response && error.response.status === 504) {
-                logger.log('504 Timeout retrying request');
-                getModSubs(after, subs => callback(modSubs.concat(subs)));
-            } else {
-                modSubs = [];
-                return callback(modSubs);
-            }
-        });
-    }
-
-    function getUserDetails (tries = 0) {
-        return TBApi.getJSON('/api/me.json').then(data => {
-            TBStorage.purifyObject(data);
-            logger.log(data);
-            return data;
-        }).catch(error => {
-            logger.log('getUserDetails failed', error);
-            if (error.response && error.response.status === 504 && tries < 4) {
-                logger.log('504 Timeout retrying request');
-                return getUserDetails(tries + 1);
-            } else {
-                throw error;
-            }
-        });
-    }
-
-    function modsubInit (cacheDetails, userDetails) {
-        if (cacheDetails.moderatedSubs.length === 0) {
-            logger.log('No modsubs in cache, getting mod subs before initalizing');
-            getModSubs(null, subs => {
-                initwrapper({
-                    userDetails,
-                    newModSubs: subs,
-                    cacheDetails,
-                });
-                profileResults('utilsLoaded', performance.now());
-                const event = new CustomEvent('TBCoreLoaded');
-                window.dispatchEvent(event);
-            });
-        } else {
-            initwrapper({userDetails, cacheDetails});
-            profileResults('utilsLoaded', performance.now());
-            const event = new CustomEvent('TBCoreLoaded');
-            window.dispatchEvent(event);
-        }
-    }
-
-    window.addEventListener('TBStorageLoaded', async () => {
+    window.addEventListener('TBStorageLoaded', async storageEvent => {
+        const userDetails = storageEvent.detail.userDetails;
+        const newModSubs = storageEvent.detail.newModSubs;
         profileResults('utilsStart', performance.now());
         const SETTINGS_NAME = 'Utils';
         const cacheDetails = {
@@ -1935,29 +1870,12 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
             noNotes: await TBStorage.getCache(SETTINGS_NAME, 'noNotes', []),
             noRules: await TBStorage.getCache(SETTINGS_NAME, 'noRules', []),
         };
-
-        let userDetails;
-
-        try {
-            userDetails = await getUserDetails();
-            if (userDetails && userDetails.constructor === Object && Object.keys(userDetails).length > 0) {
-                TBStorage.setCache(SETTINGS_NAME, 'userDetails', userDetails);
-            }
-
-            if (!userDetails) {
-                throw new Error('User details are empty');
-            }
-        } catch (error) {
-            logger.warn('Could not get user details through API.', error);
-
-            logger.log('Attempting to use user detail cache.');
-            userDetails = await TBStorage.getCache(SETTINGS_NAME, 'userDetails', {});
-        }
-
-        if (userDetails && userDetails.constructor === Object && Object.keys(userDetails).length > 0) {
-            modsubInit(cacheDetails, userDetails);
-        } else {
-            logger.error('Toolbox does not have user details and cannot not start.');
-        }
+        initwrapper({userDetails, newModSubs, cacheDetails});
+        profileResults('utilsLoaded', performance.now());
+        logger.log('core utils loaded');
+        const event = new CustomEvent('TBCoreLoaded');
+        window.dispatchEvent(event);
+    }, {
+        once: true,
     });
 })();

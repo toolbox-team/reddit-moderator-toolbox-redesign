@@ -274,4 +274,6 @@ function nukecomments () {
 
 window.addEventListener('TBModuleLoaded', () => {
     nukecomments();
+}, {
+    once: true,
 });

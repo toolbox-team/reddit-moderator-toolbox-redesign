@@ -1121,4 +1121,6 @@ window.addEventListener('TBCoreLoaded', () => {
     profileResults('moduleLoaded', performance.now());
     const event = new CustomEvent('TBModuleLoaded');
     window.dispatchEvent(event);
+}, {
+    once: true,
 });

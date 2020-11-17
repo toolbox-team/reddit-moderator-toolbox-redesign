@@ -6,5 +6,7 @@
     window.addEventListener('TBModuleLoaded', () => {
         $.log('TBModule loaded, getting TBStorage', false, 'TBinit');
         TB.init();
+    }, {
+        once: true,
     });
 })();

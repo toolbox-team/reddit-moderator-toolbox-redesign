@@ -340,7 +340,7 @@ function tbconfig () {
             subreddit = $(this).data('subreddit');
 
             TBApi.readFromWiki(subreddit, 'toolbox', true).then(resp => {
-                if (!resp || resp === TBCore.WIKI_PAGE_UNKNOWN || resp === TBCore.NO_WIKI_PAGE) {
+                if (!resp || resp === TBApi.WIKI_PAGE_UNKNOWN || resp === TBApi.NO_WIKI_PAGE) {
                     self.log('Failed: wiki config');
 
                     config = TBCore.config;
@@ -498,13 +498,13 @@ function tbconfig () {
                 });
 
                 TBApi.readFromWiki(subreddit, actualPage, false).then(resp => {
-                    if (resp === TBCore.WIKI_PAGE_UNKNOWN) {
+                    if (resp === TBApi.WIKI_PAGE_UNKNOWN) {
                         $textArea.val('error getting wiki data.');
                         configEditor.setValue('error getting wiki data.');
                         return;
                     }
 
-                    if (resp === TBCore.NO_WIKI_PAGE) {
+                    if (resp === TBApi.NO_WIKI_PAGE) {
                         $textArea.val('');
                         configEditor.setValue('');
                         $saveButton.show();
@@ -531,12 +531,12 @@ function tbconfig () {
                 $textArea.val('getting wiki data...');
 
                 TBApi.readFromWiki(subreddit, actualPage, false).then(resp => {
-                    if (resp === TBCore.WIKI_PAGE_UNKNOWN) {
+                    if (resp === TBApi.WIKI_PAGE_UNKNOWN) {
                         $textArea.val('error getting wiki data.');
                         return;
                     }
 
-                    if (resp === TBCore.NO_WIKI_PAGE) {
+                    if (resp === TBApi.NO_WIKI_PAGE) {
                         $textArea.val('');
                         $saveButton.show();
                         $saveButton.attr('page', page);
@@ -903,7 +903,7 @@ function tbconfig () {
                 // determine if we want to pull a new config, we only do this if the toolbox config wiki has been edited.
                 if ($body.hasClass('toolbox-wiki-edited')) {
                     TBApi.readFromWiki(subreddit, 'toolbox', true).then(resp => {
-                        if (!resp || resp === TBCore.WIKI_PAGE_UNKNOWN || resp === TBCore.NO_WIKI_PAGE) {
+                        if (!resp || resp === TBApi.WIKI_PAGE_UNKNOWN || resp === TBApi.NO_WIKI_PAGE) {
                             self.log('Failed: wiki config');
                             return;
                         }
@@ -1053,7 +1053,7 @@ function tbconfig () {
                 // determine if we want to pull a new config, we only do this if the toolbox config wiki has been edited.
                 if ($body.hasClass('toolbox-wiki-edited')) {
                     TBApi.readFromWiki(subreddit, 'toolbox', true).then(resp => {
-                        if (!resp || resp === TBCore.WIKI_PAGE_UNKNOWN || resp === TBCore.NO_WIKI_PAGE) {
+                        if (!resp || resp === TBApi.WIKI_PAGE_UNKNOWN || resp === TBApi.NO_WIKI_PAGE) {
                             self.log('Failed: wiki config');
                             return;
                         }
@@ -1247,7 +1247,7 @@ function tbconfig () {
             // determine if we want to pull a new config, we only do this if the toolbox config wiki has been edited.
             if ($body.hasClass('toolbox-wiki-edited')) {
                 TBApi.readFromWiki(subreddit, 'toolbox', true).then(resp => {
-                    if (!resp || resp === TBCore.WIKI_PAGE_UNKNOWN || resp === TBCore.NO_WIKI_PAGE) {
+                    if (!resp || resp === TBApi.WIKI_PAGE_UNKNOWN || resp === TBApi.NO_WIKI_PAGE) {
                         self.log('Failed: wiki config');
                         return;
                     }
@@ -1330,7 +1330,7 @@ function tbconfig () {
                 // determine if we want to pull a new config, we only do this if the toolbox config wiki has been edited.
                 if ($body.hasClass('toolbox-wiki-edited')) {
                     TBApi.readFromWiki(subreddit, 'toolbox', true).then(resp => {
-                        if (!resp || resp === TBCore.WIKI_PAGE_UNKNOWN || resp === TBCore.NO_WIKI_PAGE) {
+                        if (!resp || resp === TBApi.WIKI_PAGE_UNKNOWN || resp === TBApi.NO_WIKI_PAGE) {
                             self.log('Failed: wiki config');
                             return;
                         }
@@ -1621,4 +1621,6 @@ function tbconfig () {
 
 window.addEventListener('TBModuleLoaded', () => {
     tbconfig();
+}, {
+    once: true,
 });

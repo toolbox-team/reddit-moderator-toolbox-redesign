@@ -192,4 +192,6 @@ function devtools () {
 
 window.addEventListener('TBModuleLoaded', () => {
     devtools();
+}, {
+    once: true,
 });

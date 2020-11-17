@@ -69,10 +69,10 @@ function storagewrapper () {
                 // Paranoid, malicious settings might be stored.
                 purifyObject(TBsettingsObject);
 
-                SendInit();
+                userDetailsInit();
             } else {
                 TBsettingsObject = {};
-                SendInit();
+                userDetailsInit();
             }
 
             // Listen for updated settings and update the settings object.
@@ -229,47 +229,151 @@ function storagewrapper () {
             });
         };
 
+        async function getModSubs (after) {
+            let modSubs = [];
+            try {
+                const json = await TBApi.getJSON('/subreddits/mine/moderator.json', {
+                    after,
+                    limit: 10,
+                });
+                TBStorage.purifyObject(json);
+                modSubs = modSubs.concat(json.data.children);
+                if (json.data.after) {
+                    const afterSubs = await getModSubs(json.data.after);
+                    return modSubs.concat(afterSubs);
+                } else {
+                    return modSubs;
+                }
+            } catch (error) {
+                logger.log('getModSubs failed', error);
+                if (error.response && error.response.status === 504) {
+                    logger.log('504 Timeout retrying request');
+                    const afterSubs = await getModSubs(after);
+                    return modSubs.concat(afterSubs);
+                } else {
+                    modSubs = [];
+                    return modSubs;
+                }
+            }
+        }
+
+        function getUserDetails (tries = 0) {
+            return TBApi.getJSON('/api/me.json').then(data => {
+                TBStorage.purifyObject(data);
+                logger.log(data);
+                return data;
+            }).catch(error => {
+                logger.log('getUserDetails failed', error);
+                if (error.response && error.response.status === 504 && tries < 4) {
+                    logger.log('504 Timeout retrying request');
+                    return getUserDetails(tries + 1);
+                } else {
+                    throw error;
+                }
+            });
+        }
+
+        // when envoked will collect all relevant user details needed to start toolbox.
+        async function userDetailsInit () {
+            profileResults('getUserDetails', performance.now());
+            const SETTINGS_NAME = 'Utils';
+            let userDetails;
+            try {
+                userDetails = await getUserDetails();
+                if (userDetails && userDetails.constructor === Object && Object.keys(userDetails).length > 0) {
+                    TBApi.setModHash(userDetails.data.modhash);
+                    TBStorage.setCache(SETTINGS_NAME, 'userDetails', userDetails);
+                }
+
+                if (!userDetails) {
+                    throw new Error('User details are empty');
+                }
+            } catch (error) {
+                logger.warn('Could not get user details through API.', error);
+
+                logger.log('Attempting to use user detail cache.');
+                userDetails = await TBStorage.getCache(SETTINGS_NAME, 'userDetails', {});
+                TBApi.setModHash(userDetails.data.modhash);
+            }
+
+            if (userDetails && userDetails.constructor === Object && Object.keys(userDetails).length > 0) {
+                const moderatedSubs = await TBStorage.getCache(SETTINGS_NAME, 'moderatedSubs', []);
+                if (moderatedSubs.length === 0) {
+                    logger.log('No modsubs in cache, getting mod subs before initalizing');
+                    const newModSubs = await getModSubs();
+                    profileResults('userDetailsGot', performance.now());
+                    SendInit({
+                        userDetails,
+                        newModSubs,
+                    });
+                } else {
+                    profileResults('userDetailsGot', performance.now());
+                    SendInit({userDetails});
+                }
+            } else {
+                logger.error('Toolbox does not have user details and cannot not start.');
+            }
+        }
+
         // private methods.
-        function SendInit () {
-            // Check if we are logged in and if we want to activate on old reddit as well.
-            let loggedinRedesign = false,
-                loggedinOld = false;
+        function SendInit ({userDetails, newModSubs}) {
+            console.log('sendInit1', performance.now());
+            if (document.readyState === 'loading') {
+                logger.log('sendInit loading');
+                document.addEventListener('readystatechange', () => {
+                    SendInit({userDetails, newModSubs});
+                }, {
+                    once: true,
+                });
+            } else {
+                console.log('sendInit2', performance.now());
+                logger.log('sendInit not loading');
+                // Check if we are logged in and if we want to activate on old reddit as well.
+                let loggedinRedesign = false,
+                    loggedinOld = false;
 
-            const $body = $('body');
+                const $body = $('body');
+                console.log('sendInit3', performance.now());
+                // Check for redesign
+                if ($body.find('#USER_DROPDOWN_ID').text() || $body.find('.BlueBar__account a.BlueBar__username').text() || $body.find('.Header__profile').length) {
+                    loggedinRedesign = true;
+                }
+                console.log('sendInit4', performance.now());
+                // Check for old reddit
+                if ($body.find('form.logout input[name=uh]').val() || $body.find('.Header__profile').length || $body.hasClass('loggedin')) {
+                    loggedinOld = true;
+                }
+                console.log('sendInit5', performance.now());
+                // When firefox updates extension they get reloaded including all content scripts. Old elements remain on the page though.
+                // Toolbox doesn't like this very much.
+                // We are using this class because of the migration mess with v4.
+                if ($body.hasClass('mod-toolbox')) {
+                    $body.attr('toolbox-warning', 'This page must be reloaded for toolbox to function correctly.');
+                    return;
+                }
+                console.log('sendInit6', performance.now());
+                // https://bugzilla.mozilla.org/show_bug.cgi?id=1380812#c7
+                // https://github.com/toolbox-team/reddit-moderator-toolbox/issues/98
+                if ((typeof InstallTrigger !== 'undefined' || 'MozBoxSizing' in document.body.style) && browser.extension.inIncognitoContext) {
+                    logger.error('firefox is in incognito mode, toolbox will not work.');
+                    return;
+                }
+                console.log('sendInit7', performance.now());
+                if (loggedinOld || loggedinRedesign) {
+                    $body.addClass('mod-toolbox-rd');
+                    $body.addClass('mod-toolbox');
+                    console.log('sendInit8', performance.now());
 
-            // Check for redesign
-            if ($body.find('#USER_DROPDOWN_ID').text() || $body.find('.BlueBar__account a.BlueBar__username').text() || $body.find('.Header__profile').length) {
-                loggedinRedesign = true;
-            }
-
-            // Check for old reddit
-            if ($body.find('form.logout input[name=uh]').val() || $body.find('.Header__profile').length || $body.hasClass('loggedin')) {
-                loggedinOld = true;
-            }
-
-            // When firefox updates extension they get reloaded including all content scripts. Old elements remain on the page though.
-            // Toolbox doesn't like this very much.
-            // We are using this class because of the migration mess with v4.
-            if ($body.hasClass('mod-toolbox')) {
-                $body.attr('toolbox-warning', 'This page must be reloaded for toolbox to function correctly.');
-                return;
-            }
-
-            // https://bugzilla.mozilla.org/show_bug.cgi?id=1380812#c7
-            // https://github.com/toolbox-team/reddit-moderator-toolbox/issues/98
-            if ((typeof InstallTrigger !== 'undefined' || 'MozBoxSizing' in document.body.style) && browser.extension.inIncognitoContext) {
-                logger.error('firefox is in incognito mode, toolbox will not work.');
-                return;
-            }
-
-            if (loggedinOld || loggedinRedesign) {
-                $body.addClass('mod-toolbox-rd');
-                $body.addClass('mod-toolbox');
-                setTimeout(() => {
                     profileResults('storageLoaded', performance.now());
-                    const event = new CustomEvent('TBStorageLoaded');
+                    const event = new CustomEvent('TBStorageLoaded', {
+                        detail: {
+                            userDetails,
+                            newModSubs,
+                        },
+                    });
+                    console.log('sendInit8', performance.now());
                     window.dispatchEvent(event);
-                }, 10);
+                }
             }
         }
 

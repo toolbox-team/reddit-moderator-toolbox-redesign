@@ -72,13 +72,13 @@ function personalnotes () {
             $editArea.css('display', 'block');
 
             TBApi.readFromWiki(notewiki, `notes/${wikiPage}`, false).then(resp => {
-                if (resp === TBCore.WIKI_PAGE_UNKNOWN) {
+                if (resp === TBApi.WIKI_PAGE_UNKNOWN) {
                     $editArea.val('error getting wiki data.');
                     TB.ui.textFeedback('error getting wiki data.', TB.ui.FEEDBACK_NEGATIVE);
                     return;
                 }
 
-                if (resp === TBCore.NO_WIKI_PAGE) {
+                if (resp === TBApi.NO_WIKI_PAGE) {
                     $editArea.val('Not sure how you did this, but this is not an existing page.');
                     TB.ui.textFeedback('error getting wiki data.', TB.ui.FEEDBACK_NEGATIVE);
                     return;
@@ -295,4 +295,6 @@ function personalnotes () {
 
 window.addEventListener('TBModuleLoaded', () => {
     personalnotes();
+}, {
+    once: true,
 });
