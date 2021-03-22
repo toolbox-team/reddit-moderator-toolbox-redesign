@@ -1909,16 +1909,13 @@
 
     $body.on('click', '.tb-comment-toggle', function () {
         const $this = $(this);
-        const thisState = $this.text();
         const $comment = $this.closest('.tb-comment');
-        $comment.find('.tb-comment-children').first().toggle();
-        $comment.find('.tb-comment-body').first().toggle();
-        $comment.find('.tb-comment-buttons').first().toggle();
-        $comment.find('.tb-comment-details').first().toggle();
 
-        if (thisState === '[–]') {
+        if ($this.text() === '[–]') {
+            $comment.find('> .tb-comment-entry > .tb-tagline ~ *').css('display', 'none');
             $this.text('[+]');
         } else {
+            $comment.find('> .tb-comment-entry > .tb-tagline ~ *').css('display', '');
             $this.text('[–]');
         }
     });
@@ -1963,13 +1960,14 @@
         const $this = $(this);
         const thisState = $this.attr('data-state') || 'collapsed';
         const $selfText = $this.closest('.tb-submission').find('.tb-self-expando');
-        $selfText.toggle();
 
         if (thisState === 'collapsed') {
             $this.html(`<i class="tb-icons">${TBui.icons.remove}</i>`);
+            $selfText.css('display', 'block');
             $this.attr('data-state', 'expanded');
         } else {
             $this.html(`<i class="tb-icons">${TBui.icons.add}</i>`);
+            $selfText.css('display', '');
             $this.attr('data-state', 'collapsed');
         }
     });

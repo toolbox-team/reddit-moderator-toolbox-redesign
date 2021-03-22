@@ -436,8 +436,11 @@ function newmodmailpro () {
                         // Toggling the source
                         if ($currentSourceField.length) {
                             // If the source field exists, toggle it
-
-                            $currentSourceField.toggle();
+                            if ($currentSourceField.css('display') === 'none') {
+                                $currentSourceField.css('display', '');
+                            } else {
+                                $currentSourceField.css('display', 'none');
+                            }
                         } else {
                             // If the source field is not present (has not been requested yet), request it and create
                             // a div+textarea with the source.

@@ -1220,7 +1220,7 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
                 count -= 1;
                 if (count <= 0) {
                     $body.find('#ratelimit-counter').empty();
-                    $body.find('#ratelimit-counter').hide();
+                    $body.find('#ratelimit-counter').css('display', '');
                     return count;
                 }
 
@@ -1244,7 +1244,7 @@ function initwrapper ({userDetails, newModSubs, cacheDetails}) {
                     }
 
                     if (chunkSize + limit > parseInt(ratelimitRemaining)) {
-                        $body.find('#ratelimit-counter').show();
+                        $body.find('#ratelimit-counter').css('display', 'inline');
                         let count = parseInt(ratelimitReset),
                             counter = 0;
 

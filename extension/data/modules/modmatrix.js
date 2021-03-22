@@ -294,8 +294,13 @@ function modmatrix () {
         // Show percentages
         modMatrixSettings.find('table').append('<tr><td><label for="showpercentages">show percentages:</label></td><td><input id="showpercentages" type="checkbox" checked="checked" /></td></tr>');
         $('#showpercentages').change(function () {
-            $('#mod-matrix .action-percentage').toggle(this.checked);
-            $('#highlightpercentages').parent().parent().toggle(this.checked);
+            if (this.checked) {
+                $('#mod-matrix .action-percentage').css('display', '');
+                $('#highlightpercentages').parent().parent().css('display', '');
+            } else {
+                $('#mod-matrix .action-percentage').css('display', 'none');
+                $('#highlightpercentages').parent().parent().css('display', 'none');
+            }
         });
 
         // Highlight percentages

@@ -312,7 +312,7 @@ function historybutton () {
               $markdown = $contentBox.find('.submission-markdown-text');
 
         if ($markdown.length > 0) {
-            $markdown.html(markdownReport).toggle();
+            $markdown.remove();
         } else {
             $contentBox.find('.table.domain-table').before(`<div class="submission-markdown">
                 <textarea class="tb-input submission-markdown-text">${markdownReport}</textarea>
