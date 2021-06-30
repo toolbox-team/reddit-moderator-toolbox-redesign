@@ -1,4 +1,3 @@
-/* global messageHandlers */
 'use strict';
 
 messageHandlers.set('tb-global', async (request, sender) => {

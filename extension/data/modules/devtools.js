@@ -1,95 +1,101 @@
-'use strict';
-function devtools () {
-    const self = new TB.Module('Developer Tools');
-    self.shortname = 'DevTools';
+import {Module} from '../tbmodule.js';
+import * as TBStorage from '../tbstorage.js';
+import * as TBApi from '../tbapi.js';
+import * as TBui from '../tbui.js';
+import {escapeHTML} from '../tbhelpers.js';
+import * as TBCore from '../tbcore.js';
+import TBListener from '../tblistener.js';
 
-    // //Default settings
-    self.settings['enabled']['default'] = true;
+const self = new Module('Developer Tools');
+self.shortname = 'DevTools';
 
-    self.config['betamode'] = false;
-    self.config['devmode'] = true;
+// //Default settings
+self.settings['enabled']['default'] = true;
 
-    self.register_setting('apiHelper', {
-        type: 'boolean',
-        default: false,
-        advanced: true,
-        title: 'Show api button next for each element received from front-end api',
-    });
+self.config['betamode'] = false;
+self.config['devmode'] = true;
 
-    self.register_setting('commentUItester', {
-        type: 'boolean',
-        default: false,
-        advanced: true,
-        title: 'Add a button to the context menu that opens an overlay to test a variety of UI things.',
-    });
-    // Module init
-    self.init = function () {
-        const $body = $('body');
+self.register_setting('apiHelper', {
+    type: 'boolean',
+    default: false,
+    advanced: true,
+    title: 'Show api button next for each element received from front-end api',
+});
 
-        const apiHelper = self.setting('apiHelper'),
-              commentUItester = self.setting('commentUItester');
+self.register_setting('commentUItester', {
+    type: 'boolean',
+    default: false,
+    advanced: true,
+    title: 'Add a button to the context menu that opens an overlay to test a variety of UI things.',
+});
+// Module init
+self.init = function () {
+    const $body = $('body');
 
-        // Function that handles
-        function modifyDiv (e) {
-            self.log(e);
-            const $target = $(e.target);
-            $target.append(`
+    const apiHelper = self.setting('apiHelper'),
+          commentUItester = self.setting('commentUItester');
+
+    // Function that handles
+    function modifyDiv (e) {
+        self.log(e);
+        const $target = $(e.target);
+        $target.append(`
             <span class="tb-bracket-button tb-show-api-info">
                 api info
             </span>
             `);
-            $target.on('click', '.tb-show-api-info', event => {
-                const $pasteContent = $(`<pre class="tb-api-info"><code>${TBHelpers.escapeHTML(JSON.stringify($target.data('tb-details'), null, '\t'))}</code></pre>`);
-                // Prepare for the popup.
-                let leftPosition;
-                if (document.documentElement.clientWidth - event.pageX < 400) {
-                    leftPosition = event.pageX - 600;
-                } else {
-                    leftPosition = event.pageX - 50;
-                }
+        $target.on('click', '.tb-show-api-info', event => {
+            const $pasteContent = $(`<pre class="tb-api-info"><code>${escapeHTML(JSON.stringify($target.data('tb-details'), null, '\t'))}</code></pre>`);
+            // Prepare for the popup.
+            let leftPosition;
+            if (document.documentElement.clientWidth - event.pageX < 400) {
+                leftPosition = event.pageX - 600;
+            } else {
+                leftPosition = event.pageX - 50;
+            }
 
-                // Build the context popup and once that is done append it to the body.
-                TB.ui.popup({
-                    title: 'front-end api info',
-                    tabs: [
-                        {
-                            title: 'Context tab',
-                            tooltip: 'Tab with context for comment.',
-                            content: $pasteContent.show(),
-                            footer: '',
-                        },
-                    ],
-                    cssClass: 'context-button-popup',
-                    draggable: true,
-                }).appendTo($('body'))
-                    .css({
-                        left: leftPosition,
-                        top: event.pageY - 10,
-                        display: 'block',
-                    });
-            });
-        }
-
-        if (apiHelper) {
-            TB.listener.debugFunc = modifyDiv;
-        }
-
-        if (commentUItester) {
-            TBui.contextTrigger('tb-testCommentUI-link', {
-                addTrigger: true,
-                triggerText: 'Show ze overlay!',
-                triggerIcon: TBui.icons.overlay,
-            });
-        }
-
-        $body.on('click', '#tb-testCommentUI-link', () => {
-            TB.ui.overlay(
-                'Comment UI tester',
-                [
+            // Build the context popup and once that is done append it to the body.
+            TBui.popup({
+                title: 'front-end api info',
+                tabs: [
                     {
-                        title: 'UI tester',
-                        tooltip: 'UItester.',
-                        content: `
+                        title: 'Context tab',
+                        tooltip: 'Tab with context for comment.',
+                        content: $pasteContent.show(),
+                        footer: '',
+                    },
+                ],
+                cssClass: 'context-button-popup',
+                draggable: true,
+            }).appendTo($('body'))
+                .css({
+                    left: leftPosition,
+                    top: event.pageY - 10,
+                    display: 'block',
+                });
+        });
+    }
+
+    if (apiHelper) {
+        TBListener.debugFunc = modifyDiv;
+    }
+
+    if (commentUItester) {
+        TBui.contextTrigger('tb-testCommentUI-link', {
+            addTrigger: true,
+            triggerText: 'Show ze overlay!',
+            triggerIcon: TBui.icons.overlay,
+        });
+    }
+
+    $body.on('click', '#tb-testCommentUI-link', () => {
+        TBui.overlay(
+            'Comment UI tester',
+            [
+                {
+                    title: 'UI tester',
+                    tooltip: 'UItester.',
+                    content: `
                             <div id="tb-comment-sitetable"></div>
                             <div id="tb-testCommentUI-input tb-input">
                                 <input type="text" placeholder="gimme that json url" id="tb-testCommentUI-input-url" class="tb-input">
@@ -110,81 +116,76 @@ function devtools () {
                                 <button class="tb-action-button tb-test-notification-button">notification</button>
                             </div>
                         `,
-                        footer: '',
-                    },
-                ],
-                [], // extra header buttons
-                'tb-comment-ui-test', // class
-                false // single overriding footer
-            ).appendTo('body');
+                    footer: '',
+                },
+            ],
+            [], // extra header buttons
+            'tb-comment-ui-test', // class
+            false, // single overriding footer
+        ).appendTo('body');
 
-            $body.css('overflow', 'hidden');
-            $body.on('click', '.tb-comment-ui-test .close', () => {
-                $('.tb-comment-ui-test').remove();
-                $body.css('overflow', 'auto');
-            });
+        $body.css('overflow', 'hidden');
+        $body.on('click', '.tb-comment-ui-test .close', () => {
+            $('.tb-comment-ui-test').remove();
+            $body.css('overflow', 'auto');
+        });
 
-            $body.on('click', '.tb-test-notification-button', () => {
-                const title = $body.find('#tb-test-notification-title').val(),
-                      body = $body.find('#tb-test-notification-body').val(),
-                      path = $body.find('#tb-test-notification-path').val(),
-                      markreadid = $body.find('#tb-test-notification-markreadid').val() || false;
+        $body.on('click', '.tb-test-notification-button', () => {
+            const title = $body.find('#tb-test-notification-title').val(),
+                  body = $body.find('#tb-test-notification-body').val(),
+                  path = $body.find('#tb-test-notification-path').val(),
+                  markreadid = $body.find('#tb-test-notification-markreadid').val() || false;
 
-                TBCore.notification(title, body, path, markreadid);
-            });
+            TBCore.notification(title, body, path, markreadid);
+        });
 
-            $body.on('click', '.tb-testCommentUI-button', async function () {
-                const $this = $(this),
-                      $siteTable = $body.find('#tb-comment-sitetable');
-                $siteTable.empty();
-                // Input must be the json permalink to a comment. As this is a dev tool it doesn't try to figure it out.
-                const inputURL = $body.find('#tb-testCommentUI-input-url').val();
-                const data = await TBApi.getJSON(inputURL, {raw_json: 1});
-                TBStorage.purifyObject(data);
-                const commentOptions = {
-                    parentLink: true,
-                    contextLink: true,
-                    fullCommentsLink: true,
-                };
+        $body.on('click', '.tb-testCommentUI-button', async function () {
+            const $this = $(this),
+                  $siteTable = $body.find('#tb-comment-sitetable');
+            $siteTable.empty();
+            // Input must be the json permalink to a comment. As this is a dev tool it doesn't try to figure it out.
+            const inputURL = $body.find('#tb-testCommentUI-input-url').val();
+            const data = await TBApi.getJSON(inputURL, {raw_json: 1});
+            TBStorage.purifyObject(data);
+            const commentOptions = {
+                parentLink: true,
+                contextLink: true,
+                fullCommentsLink: true,
+            };
 
-                if ($this.hasClass('fetch-thread')) {
-                    const $comments = TBui.makeCommentThread(data[1].data.children, commentOptions);
-                    $siteTable.append($comments);
-                    TBui.tbRedditEvent($comments);
-                    $('time.timeago').timeago();
-                } else {
-                    const $comment = TBui.makeSingleComment(data[1].data.children[0], commentOptions);
-                    $siteTable.append($comment);
-                    TBui.tbRedditEvent($comment);
+            if ($this.hasClass('fetch-thread')) {
+                const $comments = TBui.makeCommentThread(data[1].data.children, commentOptions);
+                $siteTable.append($comments);
+                TBui.tbRedditEvent($comments);
+                $('time.timeago').timeago();
+            } else {
+                const $comment = TBui.makeSingleComment(data[1].data.children[0], commentOptions);
+                $siteTable.append($comment);
+                TBui.tbRedditEvent($comment);
+                $('time.timeago').timeago();
+            }
+        });
+
+        $body.on('click', '.tb-testSubmissionUI-button', async () => {
+            const $siteTable = $body.find('#tb-comment-sitetable');
+            $siteTable.empty();
+            const inputURL = $body.find('#tb-testCommentUI-input-url').val();
+            const data = await TBApi.getJSON(inputURL, {raw_json: 1});
+            TBStorage.purifyObject(data);
+            TBCore.forEachChunkedDynamic(data.data.children, entry => {
+                if (entry.kind === 't3') {
+                    const $submission = TBui.makeSubmissionEntry(entry);
+                    $siteTable.append($submission);
                     $('time.timeago').timeago();
                 }
-            });
-
-            $body.on('click', '.tb-testSubmissionUI-button', async () => {
-                const $siteTable = $body.find('#tb-comment-sitetable');
-                $siteTable.empty();
-                const inputURL = $body.find('#tb-testCommentUI-input-url').val();
-                const data = await TBApi.getJSON(inputURL, {raw_json: 1});
-                TBStorage.purifyObject(data);
-                TBCore.forEachChunkedDynamic(data.data.children, entry => {
-                    if (entry.kind === 't3') {
-                        const $submission = TBui.makeSubmissionEntry(entry);
-                        $siteTable.append($submission);
-                        $('time.timeago').timeago();
-                    }
-                }).then(() => {
-                    setTimeout(() => {
-                        TBui.tbRedditEvent($siteTable);
-                        TB.ui.longLoadSpinner(false);
-                    }, 1000);
-                });
+            }).then(() => {
+                setTimeout(() => {
+                    TBui.tbRedditEvent($siteTable);
+                    TBui.longLoadSpinner(false);
+                }, 1000);
             });
         });
-    };
+    });
+};
 
-    TB.register_module(self);
-}
-
-window.addEventListener('TBModuleLoaded', () => {
-    devtools();
-});
+export default self;

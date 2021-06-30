@@ -1,4 +1,12 @@
-'use strict';
+import TBLog from './tblog.js';
+import * as TBStorage from './tbstorage.js';
+import * as TBui from './tbui.js';
+import * as TBHelpers from './tbhelpers.js';
+import TBListener from './tblistener.js';
+import * as TBCore from './tbcore.js';
+
+const logger = TBLog('TBModule');
+
 function tbmodule () {
     window.TB = {
         ui: TBui,
@@ -6,20 +14,22 @@ function tbmodule () {
         listener: TBListener,
 
         modules: {},
-        moduleList: [],
+
+        /** @deprecated */
+        get moduleList () {
+            return Object.values(TB.modules).map(mod => mod.shortname);
+        },
 
         register_module (module) {
-            this.moduleList.push(module.shortname);
             this.modules[module.shortname] = module;
         },
 
         init: function tbInit () {
-            profileResults('tbInit', performance.now());
             initLoop();
 
             function initLoop () {
                 setTimeout(() => {
-                    $.log('TBModule has TBStorage, loading modules', false, 'TBinit');
+                    logger.debug('TBModule has TBStorage, loading modules');
                     // call every module's init() method on page load
                     for (let i = 0; i < TB.moduleList.length; i++) {
                         const module = TB.modules[TB.moduleList[i]];
@@ -29,7 +39,7 @@ function tbmodule () {
                         // if (!TB.setting('betamode') && module.setting('betamode')) {
                         if (!TB.storage.getSetting('Utils', 'betaMode', false) && module.config['betamode']) {
                         // skip this module entirely
-                            $.log(`Beta  mode not enabled. Skipping ${module.name} module`, false, 'TBinit');
+                            logger.debug(`Beta  mode not enabled. Skipping ${module.name} module`);
                             continue;
                         }
 
@@ -39,25 +49,24 @@ function tbmodule () {
 
                         if (!TB.storage.getSetting('Utils', 'debugMode', false) && module.config['devmode']) {
                         // skip this module entirely
-                            $.log(`Debug mode not enabled. Skipping ${module.name} module`, false, 'TBinit');
+                            logger.debug(`Debug mode not enabled. Skipping ${module.name} module`);
                             continue;
                         }
 
                         if (!TBCore.isOldReddit && module.oldReddit) {
-                            $.log(`Module not suitable for new reddit. Skipping ${module.name} module`, false, 'TBinit');
+                            logger.debug(`Module not suitable for new reddit. Skipping ${module.name} module`);
                             continue;
                         }
 
                         // lock 'n load
                         if (module.setting('enabled')) {
-                            $.log(`Loading ${module.name} module`, false, 'TBinit');
+                            logger.debug(`Loading ${module.name} module`);
                             module.init();
                         }
                     }
 
                     // Start the event listener once everything else is initialized
                     TB.listener.start();
-                    profileResults('tbInitDone', performance.now());
                 }, 50);
             }
         },
@@ -69,10 +78,10 @@ function tbmodule () {
             //
             // preload some generic variables
             //
-            const debugMode = TBCore.debugMode,
-                  betaMode = TBCore.betaMode,
-                  devMode = TBCore.devMode,
-                  advancedMode = TBCore.advancedMode,
+            const debugMode = TBStorage.getSetting('Utils', 'debugMode', false),
+                  betaMode = TBStorage.getSetting('Utils', 'betaMode', false),
+                  devMode = window.TBCore.devMode,
+                  advancedMode = TBStorage.getSetting('Utils', 'advancedMode', false),
 
                   settingSub = TB.storage.getSetting('Utils', 'settingSub', ''),
                   shortLength = TB.storage.getSetting('Utils', 'shortLength', 15),
@@ -269,7 +278,7 @@ function tbmodule () {
                     <p class="tb-settings-p"><a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
                     <p class="tb-settings-p">Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
                         <br> See the License for the specific language governing permissions and limitations under the License.</p>
-                    <p class="tb-settings-p" ${debugMode && !TBCore.devModeLock ? ' ' : 'style="display:none;" '}>
+                    <p class="tb-settings-p" ${debugMode && !window.TBCore.devModeLock ? ' ' : 'style="display:none;" '}>
                         <label><input type="checkbox" id="devMode" ${devMode ? 'checked' : ''}> DEVMODE: DON'T EVER ENABLE THIS!</label>
                     </p>`,
                 },
@@ -288,7 +297,7 @@ function tbmodule () {
                 // overlay main class
                 'tb-settings tb-personal-settings', // TODO: remove tb-settings from this after port is complete
                 // optional, overriding single footer
-                `<input class="tb-save tb-action-button" type="button" value="save">${TBCore.devMode ? '&nbsp;<input class="tb-save-reload tb-action-button" type="button" value="save and reload">' : ''}`
+                `<input class="tb-save tb-action-button" type="button" value="save">${window.TBCore.devMode ? '&nbsp;<input class="tb-save-reload tb-action-button" type="button" value="save and reload">' : ''}`,
             );
 
             // Add ordering attributes to the existing tabs so we can insert other special tabs around them
@@ -361,7 +370,7 @@ function tbmodule () {
                     if (succ) {
                         TB.ui.textFeedback('Settings saved and verified', TB.ui.FEEDBACK_POSITIVE);
                         setTimeout(() => {
-                        // Only reload in dev mode if we asked to.
+                            // Only reload in dev mode if we asked to.
                             if (!devMode || reload) {
                                 window.location.reload();
                             }
@@ -377,7 +386,7 @@ function tbmodule () {
                 if (!sub) {
                     TB.ui.textFeedback('You have not set a subreddit to backup/restore settings', TB.ui.FEEDBACK_NEGATIVE);
 
-                    $.log('no setting sub');
+                    logger.debug('no setting sub');
                     return;
                 }
 
@@ -512,7 +521,7 @@ function tbmodule () {
                     // "enabled" is special during the transition period, while the "Toggle Modules" tab still exists
                     if (setting === 'enabled') {
                         moduleIsEnabled = module.setting(setting) ? true : false;
-                        if (Object.prototype.hasOwnProperty.call(options, 'hidden') && options['hidden'] && !TBCore.devMode) {
+                        if (Object.prototype.hasOwnProperty.call(options, 'hidden') && options['hidden'] && !window.TBCore.devMode) {
                             continue;
                         }
                         const name = module.shortname.toLowerCase();
@@ -568,7 +577,7 @@ function tbmodule () {
 
                     // hide hidden settings, ofc
                     if (Object.prototype.hasOwnProperty.call(options, 'hidden')
-                        && options['hidden'] && !TBCore.devMode
+                        && options['hidden'] && !window.TBCore.devMode
                     ) {
                         continue;
                     }
@@ -576,7 +585,7 @@ function tbmodule () {
                     // hide advanced settings, but do it via CSS so it can be overridden.
                     let displaySetting = true;
                     if (Object.prototype.hasOwnProperty.call(options, 'advanced')
-                        && options['advanced'] && !TBCore.advancedMode
+                        && options['advanced'] && !TBStorage.getSetting('Utils', 'advancedMode', false)
                     ) {
                         displaySetting = false;
                     }
@@ -640,7 +649,7 @@ function tbmodule () {
                     case 'sublist':
                     {
                         $setting.append(`${title}:<br />`);
-                        $setting.append(TB.ui.selectMultiple.apply(TB.ui, [TBCore.mySubs, module.setting(setting)]));
+                        $setting.append(TB.ui.selectMultiple.apply(TB.ui, [window.TBCore.mySubs, module.setting(setting)]));
                         break;
                     }
                     case 'map':
@@ -727,13 +736,13 @@ body {
                     {
                         noWrap = true;
 
-                        $.log('----------', false, 'TBModule');
-                        $.log('GENERATING ACHIEVEMENT PAGE', false, 'TBModule');
+                        logger.debug('----------');
+                        logger.debug('GENERATING ACHIEVEMENT PAGE');
                         const total = module.manager.getAchievementTotal(),
                               unlocked = module.manager.getUnlockedCount();
 
-                        $.log(`  total=${total}`, false, 'TBModule');
-                        $.log(`  unlocked=${unlocked}`, false, 'TBModule');
+                        logger.debug(`  total=${total}`);
+                        logger.debug(`  unlocked=${unlocked}`);
 
                         $setting = $('<div>').attr('class', 'achievements');
                         $setting.append($('<h1>').text('Mod Achievements'));
@@ -745,14 +754,14 @@ body {
 
                         const $list = $('<div>').attr('class', 'achievements-list');
                         for (let saveIndex = 0; saveIndex < module.manager.getAchievementBlockCount(); saveIndex++) {
-                            $.log(`  saveIndex: ${saveIndex}`, false, 'TBModule');
+                            logger.debug(`  saveIndex: ${saveIndex}`);
                             for (let index = 0; index < module.manager.getAchievementCount(saveIndex); index++) {
-                                $.log(`  index: ${index}`, false, 'TBModule');
+                                logger.debug(`  index: ${index}`);
                                 let aTitle = '???',
                                     aDescr = '??????',
                                     aClass = '';
 
-                                if (module.manager.isUnlocked(saveIndex, index, save) || TBCore.devMode) {
+                                if (module.manager.isUnlocked(saveIndex, index, save) || window.TBCore.devMode) {
                                     const a = module.manager.getAchievement(saveIndex, index);
                                     aTitle = a.title;
                                     aDescr = a.descr;
@@ -966,141 +975,135 @@ body {
                 });
             });
         },
+
     };
 
-    // Prototype for all toolbox modules
-    TB.Module = function Module (name) {
-    // PUBLIC: Module Metadata
-        this.name = name;
-
-        this.config = {
-            betamode: false,
-            devmode: false,
-        };
-
-        this.settings = {};
-        this.settingsList = [];
-
-        this.register_setting = function register_setting (name, setting) {
-            this.settingsList.push(name);
-            this.settings[name] = setting;
-        };
-
-        this.register_setting('enabled', { // this one serves as an example as well as the absolute minimum setting that every module has
-            type: 'boolean',
-            default: false,
-            betamode: false, // optional
-            hidden: false, // optional
-            title: `Enable ${this.name}`,
-        });
-
-        // PUBLIC: settings interface
-        this.setting = function (name, value, syncSetting = true) {
-        // are we setting or getting?
-            if (typeof value !== 'undefined') {
-            // setting
-                return TB.storage.setSetting(this.shortname, name, value, syncSetting);
-            } else {
-            // getting
-            // do we have a default?
-                if (Object.prototype.hasOwnProperty.call(this.settings, name)
-                && Object.prototype.hasOwnProperty.call(this.settings[name], 'default')
-                ) {
-                // we know what the default should be
-                    return TB.storage.getSetting(this.shortname, name, this.settings[name]['default']);
-                } else {
-                // getSetting defaults to null for default value, no need to pass it explicitly
-                    return TB.storage.getSetting(this.shortname, name);
-                }
-            }
-        };
-
-        // Logging utilities
-        Object.assign(this, TBLog(this));
-
-        // Profiling
-
-        const profile = new Map(),
-              startTimes = new Map();
-
-        this.startProfile = function (key) {
-            if (!TBCore.debugMode) {
-                return;
-            }
-
-            startTimes.set(key, performance.now());
-
-            if (!profile.has(key)) {
-                // New key: add a new profile
-                profile.set(key, {time: 0, calls: 1});
-            } else {
-                // Existing key: increment calls
-                profile.get(key).calls++;
-            }
-        };
-
-        this.endProfile = function (key) {
-            if (!TBCore.debugMode) {
-                return;
-            }
-
-            // Never started profiling for the key
-            if (!startTimes.has(key)) {
-                return;
-            }
-
-            // Get spent time
-            const diff = performance.now() - startTimes.get(key);
-            startTimes.delete(key);
-
-            // Must have been started, so the object exists
-            profile.get(key).time += diff;
-        };
-
-        this.getProfiles = function () {
-            return profile;
-        };
-
-        this.getProfile = function (key) {
-            return profile.get(key);
-        };
-
-        this.printProfiles = function () {
-            this.log(`Profiling results: ${this.name}`);
-            this.log('--------------------------');
-            const loopthis = this;
-            this.getProfiles().forEach((profile, key) => {
-                loopthis.log(`${key}:`);
-                loopthis.log(`\tTime  = ${profile.time.toFixed(4)}`);
-                loopthis.log(`\tCalls = ${profile.calls}`);
-            });
-            this.log('--------------------------');
-        };
-
-        // PUBLIC: placeholder init(), just in case
-        this.init = function init () {
-        // pass
-        };
-    };
-
-    TB.Module.prototype = {
-        _shortname: '',
-        get shortname () {
-            // return name.trim().toLowerCase().replace(' ', '_');
-            return this._shortname.length > 0 ? this._shortname : this.name.trim().replace(/\s/g, '');
-        },
-        set shortname (val) {
-            this._shortname = val;
-        },
-    };
+    TB.Module = Module;
 }
 
-window.addEventListener('TBCoreLoaded', () => {
-    profileResults('moduleStart', performance.now());
+// Prototype for all toolbox modules
+export function Module (name) {
+    // PUBLIC: Module Metadata
+    this.name = name;
 
-    $.log('TBModule has TBCore', false, 'TBinit');
-    tbmodule();
-    profileResults('moduleLoaded', performance.now());
-    const event = new CustomEvent('TBModuleLoaded');
-    window.dispatchEvent(event);
-});
+    this.config = {
+        betamode: false,
+        devmode: false,
+    };
+
+    this.settings = {};
+    this.settingsList = [];
+
+    this.register_setting = function register_setting (name, setting) {
+        this.settingsList.push(name);
+        this.settings[name] = setting;
+    };
+
+    this.register_setting('enabled', { // this one serves as an example as well as the absolute minimum setting that every module has
+        type: 'boolean',
+        default: false,
+        betamode: false, // optional
+        hidden: false, // optional
+        title: `Enable ${this.name}`,
+    });
+
+    // PUBLIC: settings interface
+    this.setting = function (name, value, syncSetting = true) {
+        // are we setting or getting?
+        if (typeof value !== 'undefined') {
+            // setting
+            return TB.storage.setSetting(this.shortname, name, value, syncSetting);
+        } else {
+            // getting
+            // do we have a default?
+            if (Object.prototype.hasOwnProperty.call(this.settings, name)
+                && Object.prototype.hasOwnProperty.call(this.settings[name], 'default')
+            ) {
+                // we know what the default should be
+                return TB.storage.getSetting(this.shortname, name, this.settings[name]['default']);
+            } else {
+                // getSetting defaults to null for default value, no need to pass it explicitly
+                return TB.storage.getSetting(this.shortname, name);
+            }
+        }
+    };
+
+    // Logging utilities
+    Object.assign(this, TBLog(this));
+
+    // Profiling
+
+    const profile = new Map(),
+          startTimes = new Map();
+
+    this.startProfile = function (key) {
+        if (!TBStorage.getSetting('Utils', 'debugMode', false)) {
+            return;
+        }
+
+        startTimes.set(key, performance.now());
+
+        if (!profile.has(key)) {
+            // New key: add a new profile
+            profile.set(key, {time: 0, calls: 1});
+        } else {
+            // Existing key: increment calls
+            profile.get(key).calls++;
+        }
+    };
+
+    this.endProfile = function (key) {
+        if (!TBStorage.getSetting('Utils', 'debugMode', false)) {
+            return;
+        }
+
+        // Never started profiling for the key
+        if (!startTimes.has(key)) {
+            return;
+        }
+
+        // Get spent time
+        const diff = performance.now() - startTimes.get(key);
+        startTimes.delete(key);
+
+        // Must have been started, so the object exists
+        profile.get(key).time += diff;
+    };
+
+    this.getProfiles = function () {
+        return profile;
+    };
+
+    this.getProfile = function (key) {
+        return profile.get(key);
+    };
+
+    this.printProfiles = function () {
+        this.log(`Profiling results: ${this.name}`);
+        this.log('--------------------------');
+        const loopthis = this;
+        this.getProfiles().forEach((profile, key) => {
+            loopthis.log(`${key}:`);
+            loopthis.log(`\tTime  = ${profile.time.toFixed(4)}`);
+            loopthis.log(`\tCalls = ${profile.calls}`);
+        });
+        this.log('--------------------------');
+    };
+
+    // PUBLIC: placeholder init(), just in case
+    this.init = function init () {
+        // pass
+    };
+}
+Module.prototype = {
+    _shortname: '',
+    get shortname () {
+        // return name.trim().toLowerCase().replace(' ', '_');
+        return this._shortname.length > 0 ? this._shortname : this.name.trim().replace(/\s/g, '');
+    },
+    set shortname (val) {
+        this._shortname = val;
+    },
+};
+
+tbmodule();

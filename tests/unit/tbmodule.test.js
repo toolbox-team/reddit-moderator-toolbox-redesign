@@ -4,8 +4,6 @@ require('../../extension/data/tbmodule');
 
 describe('tbmodule.js', () => {
     const setupMockWindow = target => {
-        const profileResults = jest.fn();
-
         const TBCore = {
             debugMode: false,
             devMode: false,
@@ -69,7 +67,6 @@ describe('tbmodule.js', () => {
         };
 
         const mockWindow = {
-            profileResults,
             TBCore,
             TBui,
             TBStorage,
@@ -171,9 +168,6 @@ describe('tbmodule.js', () => {
                         jest.clearAllMocks();
                         TB.init();
                         jest.runAllTimers();
-                        expect(profileResults).toHaveBeenNthCalledWith(1, 'tbInit', expect.anything());
-                        expect(profileResults).toHaveBeenNthCalledWith(2, 'tbInitDone', expect.anything());
-                        expect(profileResults).toHaveBeenCalledTimes(2);
                     });
 
                     describe('`betaMode` setting + `betamode` module', () => {
@@ -377,7 +371,7 @@ describe('tbmodule.js', () => {
                             module.shortname,
                             name,
                             value,
-                            expect.anything()
+                            expect.anything(),
                         );
                     });
                     it('defaults `syncSetting` parameter to `true`', () => {
@@ -386,7 +380,7 @@ describe('tbmodule.js', () => {
                             expect.anything(),
                             expect.anything(),
                             expect.anything(),
-                            syncSetting
+                            syncSetting,
                         );
                     });
                     it('honors `false` for `syncSetting` parameter', () => {
@@ -396,7 +390,7 @@ describe('tbmodule.js', () => {
                             expect.anything(),
                             expect.anything(),
                             expect.anything(),
-                            syncSetting
+                            syncSetting,
                         );
                     });
                     it('propagates the return value', () => {
@@ -432,7 +426,7 @@ describe('tbmodule.js', () => {
                         expect(TB.storage.getSetting).toHaveBeenLastCalledWith(
                             module.shortname,
                             name,
-                            defaultValue
+                            defaultValue,
                         );
                     });
                     it('propagates the return value', () => {

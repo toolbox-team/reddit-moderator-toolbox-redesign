@@ -24,7 +24,7 @@
         "codecov": "^3.7.1",
         "coveralls": "^3.0.7",
         "docdash": "^1.1.1",
-        "eslint": "^5.16.0",
+        "eslint": "^7.24.0",
         "eslint-plugin-jest": "^22.21.0",
         "jest": "^24.9.0",
         "jest-webextension-mock": "^3.5.0",

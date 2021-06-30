@@ -1,6 +1,7 @@
 {
     "parserOptions": {
-        "ecmaVersion": 2017
+        "ecmaVersion": 11,
+        "sourceType": "module"
     },
     "env": {
         "browser": true,
@@ -9,13 +10,6 @@
     },
     "globals": {
         "TB": true,
-        "TBListener": true,
-        "TBCore": true,
-        "TBHelpers": true,
-        "TBApi": true,
-        "TBui": true,
-        "TBStorage": true,
-        "TBLog": true,
         "CodeMirror": true,
         "redditapi": true,
         "browser": true,
@@ -23,15 +17,11 @@
         "SnuOwnd": true,
         "pako": true,
         "tinycolor": true,
-        "DOMPurify": true,
-        "profileResults": true
+        "DOMPurify": true
     },
     "extends": "eslint:recommended",
     "rules": {
-        "strict": [
-            "error",
-            "global"
-        ],
+        "strict": "off",
         "no-prototype-builtins": "warn",
         "no-console": 0,
         "no-multi-spaces": "error",
@@ -41,6 +31,7 @@
         "no-constant-condition": "warn",
         "space-infix-ops": "error",
         "no-sequences": "error",
+        "no-use-before-define": ["error", "nofunc"],
         "no-multiple-empty-lines": [
             "error",
             {

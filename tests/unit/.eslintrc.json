@@ -2,5 +2,11 @@
     "extends": ["plugin:jest/recommended"],
     "env": {
         "node": true
+    },
+    "globals": {
+        "TBui": true,
+        "TBStorage": true,
+        "TBListener": true,
+        "TBLog": true
     }
 }
